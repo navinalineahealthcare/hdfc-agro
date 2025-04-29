@@ -1,0 +1,22 @@
+import { Router } from "express";
+import pingRoutes from "../https/ping/routes/ping.routes";
+
+
+import countryStateCityRouter from "../https/country-state-city/routes/country-state-city.routes";
+
+import adminRoutes from "../https/admin/index.routes";
+import UploadRouter from "../https/upload/routes/upload.routes";
+
+const router = Router();
+
+router.use("/", pingRoutes);
+
+router.use("/admin", adminRoutes);
+
+router.use("/country-state-city", countryStateCityRouter);
+
+router.use("/upload", UploadRouter);
+
+
+
+export default router;

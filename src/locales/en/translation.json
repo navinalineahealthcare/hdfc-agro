@@ -1,0 +1,67 @@
+{
+  "pong": "pong",
+  "user": {
+    "user_already_exists": "User with this email already exists",
+    "user_created": "Profile submitted successfully.",
+    "password_not_match": "Password does not match with this email",
+    "email_not_exists": "Email does not exists",
+    "wrong_email_or_password": "User with this email and password does not exist",
+    "logged_in": "Logged In successfully",
+    "logged_out": "Logged Out successfully",
+    "invalid_reset_link": "Invalid reset link",
+    "link_expired": "Reset password link has expired",
+    "reset_password_message": "Reset password link has been sent to your email",
+    "password_reset_success": "Password has been reset successfully",
+    "notification_deleted": "Notifications cleared successfully",
+    "single_notification_deleted": "Notification cleared successfully",
+    "apple_error": "There was an error connecting to the Apple ID server. Go to Setting -> Password & Security->App using your Apple ID->ClothesLyne->Stop using apple ID",
+    "forgot_password_reset_link": "Forgot password reset link sent to your email",
+    "user_inactive": "Sorry! Your account has been inactive by the system.",
+    "user_deleted": "Sorry! Your account has been removed by the system.",
+    "user_wrong_password": "Current password does not match",
+    "same_password": "Current password and new password shouldn't be same",
+    "password_reset_successs": "Your Password Changed Successfully.",
+    "confirm_password_passoword_same": "Confirm password and password must be same",
+    "profile_updated": "Profile updated Successfully.",
+    "invalid_signin_type": "Provided signin type is invalid.",
+    "profile_already_completed": "The customer's profile information is already registered.",
+    "verify_number_first": "Verify your number first.",
+    "contactus_form_submit": "Form submitted successfully.",
+    "session_expired": "Your Session has been expired, please login first.",
+    "email_exists": "Entered Email ID is already registered"
+  },
+
+  "device": {
+    "device_created": "Device created",
+    "device_deleted": "Device deleted",
+    "device_updated": "Device updated",
+    "device_not_found": "Device not found"
+  },
+  "auth": {
+    "invalid_token": "Invalid token",
+    "token_expired": "Token expired"
+  },
+  "crud": {
+    "list": "{{model}} list",
+    "created": "{{model}} created successfully!",
+    "updated": "{{model}} updated successfully!",
+    "deleted": "{{model}} deleted successfully!",
+    "not_found": "{{model}} not found",
+    "already_exists": "{{model}} already exists",
+    "details": "{{model}} details",
+    "items_not_deleted": "At least {{count}} {{model}} must remain and cannot be deleted.",
+    "can_not_deleted": "Sorry, you can't delete the {{name}}. Cars are currently listed on this {{model}}.",
+    "can_not_inactive": "Sorry, you can't inactivate the {{name}}. Cars are currently listed on this {{model}}.",
+    "can_not_be_update": "Sorry, you can't updated the status of {{model}}.",
+    "sended": "{{model}} has been sended successfully.",
+    "expired": "{{model}} was expired.",
+    "already_done": "{{model}} is already done.",
+    "sent": "{{model}} sent successfully."
+  },
+  "upload": {
+    "allowed_one": "{{model}} allowed only one url",
+    "done": "File uploaded successfully!",
+    "image_required": "{{model}} path image is required",
+    "error": "Image not uploaded.please try again"
+  }
+}

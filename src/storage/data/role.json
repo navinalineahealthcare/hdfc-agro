@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Super_Admin",
+        "displayName": "Super admin",
+        "description": ""
+    },
+    {
+        "name": "Admin",
+        "displayName": "Admin",
+        "description": ""
+    },
+    {
+        "name": "Agent",
+        "displayName": "Agent",
+        "description": ""
+    }
+]
