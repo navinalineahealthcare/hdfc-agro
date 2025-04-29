@@ -36,18 +36,20 @@ const adminSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'roles'
     },
-    countryId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Country'
-    },
-    stateId: {
-        type: Schema.Types.ObjectId, 
-        ref: 'State'
-    },
-    cityId: {
-        type: Schema.Types.ObjectId,
-        ref: 'City'
-    },
+    
+    // countryId: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Country'
+    // },
+    // stateId: {
+    //     type: Schema.Types.ObjectId, 
+    //     ref: 'State'
+    // },
+    // cityId: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'City'
+    // },
+    
     phoneCodeId: {
         type: Schema.Types.ObjectId
     },

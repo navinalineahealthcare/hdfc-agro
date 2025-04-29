@@ -15,7 +15,4 @@ router.use(
   roleHasPermissionRoutes
 );
 
-// router.use("/faqs", verifyToken, verifypermission, faqRoutes);
-// router.use("/activity-logs", verifyToken, activityLogsRoutes);
-
 export default router;

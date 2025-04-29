@@ -2,8 +2,6 @@ import { Router } from "express";
 import { UploadSingleFile } from "../../../middleware/Storage";
 import { UPLOAD_TYPES } from "../../../utils/types";
 import { UploadController } from "../controllers/upload.controller";
-import { RequestValidator } from "../../../middleware/RequestValidator";
-import { UploadRequest } from "../requests/upload.request";
 
 const router = Router();
 
@@ -13,9 +11,9 @@ router.post(
     UploadController.uploadData
 )
 
-router.get(
-    "/",
-    UploadController.sendNotification
-)
+// router.get(
+//     "/",
+//     UploadController.sendNotification
+// )
 
 export default router;
