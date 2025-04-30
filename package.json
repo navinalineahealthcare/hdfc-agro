@@ -9,7 +9,6 @@
         "build": "rimraf dist && node esbuild.config.js && npm run copy && mkdir dist/storage/logs",
         "copy": "cp -r ./src/storage ./dist/  && cp -r ./src/views ./dist/ && cp -r ./src/locales ./dist/ && cp .env dist/",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "seed": "ts-node ./src/seeders/seed.ts",
         "seed:roles": "yarn ts-node-dev src/seeders/role.ts",
         "seed:module-permission": "yarn ts-node-dev src/seeders/module-permission.ts",
         "seed:role-has-permission": "yarn ts-node-dev src/seeders/role-has-permission.ts",

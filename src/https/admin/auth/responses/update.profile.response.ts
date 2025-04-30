@@ -16,15 +16,9 @@ const objectResponse = (admin: adminType) => {
     email: admin.email,
     roleId: admin.roleId,
     status:admin.status,
-    country: admin.countryId,
-    state: admin.stateId,
-    city: admin.cityId,
-    phoneCodeId: admin.phoneCodeId,
     phoneCode: admin.phoneCode,
     phoneNumber: admin.phoneNumber,
     address: admin.address,
     image: admin.image,
-    countryId: admin.countryId,
-    stateId: admin.stateId,
   };
 };

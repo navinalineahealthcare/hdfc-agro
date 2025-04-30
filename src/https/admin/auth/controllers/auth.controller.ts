@@ -5,37 +5,29 @@ import {
   deleteDevice,
   loginService,
 } from "../services/auth.service";
-import { loginResponse } from "../responses/login.response";
-import { updateProfileResponse } from "../responses/update.profile.response";
-import { Admin } from "../model/admin.model";
-import { statusEnum } from "../types/auth.type";
-import * as jwt from "jsonwebtoken";
-import { env } from "../../../../env";
 import bcrypt from "bcryptjs";
-import {
-  verifyFileisAvailable,
-  verifyCountry,
-  verifyState,
-  verifyCity,
-  randomNumber,
-} from "../../../../utils/utils";
+import * as jwt from "jsonwebtoken";
 import mongoose, { Types } from "mongoose";
-import { Role } from "../../role-and-permission/models/role";
-import { RoleHasPermission } from "../../role-and-permission/models/roleHasPermission";
-import { UserHasPermission } from "../model/userHasPermission";
+import { env } from "../../../../env";
+import { verifyFileisAvailable } from "../../../../utils/utils";
 import { addLog } from "../../../common/log/services/log.service";
 import {
   deleteMediaurl,
   updateMediaurl,
 } from "../../../upload/services/media.service";
+import { Role } from "../../role-and-permission/models/role";
+import { Admin } from "../model/admin.model";
+import { loginResponse } from "../responses/login.response";
+import { updateProfileResponse } from "../responses/update.profile.response";
 
-import { forgotPasswordUrl } from "../../../../jobs/forgotPasswordMailSend";
-import fs from "fs";
-import path from "path";
-import { Device } from "../model/device.model";
-import Country from "../../../country-state-city/models/country.model";
 import countryTimezone from "countries-and-timezones";
+import fs from "fs";
 import passport from "passport";
+import path from "path";
+import { statusEnum } from "../../../common/enums";
+import Country from "../../../country-state-city/models/country.model";
+import { Device } from "../model/device.model";
+
 class authController {
   public static async login(req: Request, res: Response) {
     try {
