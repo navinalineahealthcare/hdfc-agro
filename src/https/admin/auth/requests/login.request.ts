@@ -1,5 +1,6 @@
 import { object, string } from "yup";
-import { devicesEnum } from "../types/auth.type";
+import { devicesEnum } from "../../../common/enums";
+
 
 export const LoginRequest = object({
   email: string().required().email(),

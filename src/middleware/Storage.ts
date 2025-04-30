@@ -112,7 +112,7 @@ const storageManager = multers3({
   },
   key: async function (req: any, file: any, cb: any) {
     // Create empty folder in s3 if folder not exist
-    if (!(await doesFolderExist("hdfc-agro", "/" + req.body.folder))) {
+    if (!(await doesFolderExist("hdfc-ergo", "/" + req.body.folder))) {
       await awsS3.putObject({
         Key: "/" + req.body.folder,
         Bucket: `${env.aws.bucket}`,

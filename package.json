@@ -1,7 +1,7 @@
 {
-    "name": "hdfc-agro",
+    "name": "hdfc-ergo",
     "version": "1.0.0",
-    "description": "alineahealth hdfc-agro",
+    "description": "alineahealth hdfc-ergo",
     "main": "index.js",
     "scripts": {
         "start": "./build/index.js",
