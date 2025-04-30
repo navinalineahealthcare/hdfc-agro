@@ -62,6 +62,8 @@ export const UploadSingleFile =
  * @param type
  * @returns
  */
+
+
 const configuredMulter = (type: UPLOAD_TYPES) => {
   return multer({
     storage: storageManager,

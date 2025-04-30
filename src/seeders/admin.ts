@@ -16,7 +16,7 @@ const seed = async () => {
         lastName: "alineahealthcare",
         email: "developer.alineahealthcare@yopmail.com",
         password: await bcrypt.hash("123456", 10),
-        role: rolesEnum.SUPER_ADMIN,
+        role: "Super_Admin",
         contactCode: "developer.alineahealthcare",
         phoneCode: "+91",
         phoneNumber: "1234567890",
@@ -42,7 +42,7 @@ const seed = async () => {
         forgotPasswordToken: "",
         status: "",
         phoneCode: "",
-        phoneNumber: ""
+        phoneNumber: "",
       },
     ];
 
@@ -61,6 +61,11 @@ const seed = async () => {
         }
       );
       const roleExits = await Role.findOne({ name: data.role });
+      if (!roleExits) {
+        console.log(`Role not found for ${data.role}`);
+        continue;
+      }
+
       if (roleExits) {
         await Admin.findOneAndUpdate(
           { email: data.email },

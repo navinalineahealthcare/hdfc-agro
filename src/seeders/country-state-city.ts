@@ -14,6 +14,7 @@ async function seed() {
 
   for (const countryData of countries) {
     const {
+      id,
       name,
       iso3,
       iso2,
@@ -29,6 +30,12 @@ async function seed() {
       latitude,
       longitude,
     } = countryData;
+
+    if (id !== 101 || name !== "India") {
+      console.log("Country name is missing, skipping this entry.");
+      continue;
+    }
+
     const country = await Country.findOneAndUpdate(
       {
         name,

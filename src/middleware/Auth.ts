@@ -5,7 +5,8 @@ import { env } from "../env";
 import { Admin } from "../https/admin/auth/model/admin.model";
 
 import { Device } from "../https/admin/auth/model/device.model";
-import { statusEnum } from "../https/common/types";
+import { statusEnum } from "../https/common/enums";
+
 
 // export const verifyToken = (
 //   req: Request,
@@ -48,7 +49,7 @@ export const verifyToken = async (
       if (req.baseUrl.indexOf("/api/admin") != -1) {
         const admin: any = await Admin.findOne({
           _id: decoded.id,
-        });
+        })
         if (!admin) {
            res.status(401).json({
             status: false,

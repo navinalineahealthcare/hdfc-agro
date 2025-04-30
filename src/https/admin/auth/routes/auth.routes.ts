@@ -56,11 +56,11 @@ router.get(
   authController.RoleList
 )
 
-router.put(
-  "/set-notification-token",
-  verifyToken,
-  RequestValidator(SetNotificationTokenRequest),
-  authController.setNotificationToken
-)
+// router.put(
+//   "/set-notification-token",
+//   verifyToken,
+//   RequestValidator(SetNotificationTokenRequest),
+//   authController.setNotificationToken
+// )
 
 export default router;

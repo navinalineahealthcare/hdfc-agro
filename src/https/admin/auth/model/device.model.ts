@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import { deviceType, devicesEnum, statusEnum } from "../types/auth.type";
+import { deviceType } from "../types/auth.type";
 import { env } from "../../../../env";
+import { devicesEnum } from "../../../common/enums";
 
 const deviceSchema = new mongoose.Schema(
   {
@@ -20,8 +21,14 @@ const deviceSchema = new mongoose.Schema(
       default: Date.now,
       expires: parseInt(env.auth.deviceExpireIn) * 60 * 60 * 1000,
     },
-    updatedAt: Date,
-    deletedAt: Date,
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

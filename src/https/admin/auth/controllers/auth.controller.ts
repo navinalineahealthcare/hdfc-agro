@@ -29,6 +29,47 @@ import Country from "../../../country-state-city/models/country.model";
 import { Device } from "../model/device.model";
 
 class authController {
+  public static async register(req: Request, res: Response) {
+    try {
+      const { email, password, firstName, lastName } = req.body.validatedData;
+
+      const existingAdmin = await Admin.findOne({ email: email });
+      
+      if (existingAdmin) {
+        res.status(400).json({
+          status: false,
+          message: req.t("user.email_already_exists"),
+        });
+      }
+
+      const hashedPassword = await bcrypt.hashSync(password);
+
+      const admin = await Admin.create({
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+      });
+
+      if (!admin) {
+        res.status(400).json({
+          status: false,
+          message: req.t("user.user_not_found"),
+        });
+      }
+
+      res.status(200).json({
+        status: true,
+        data: loginResponse(admin),
+        message: req.t("user.registered_successfully"),
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
   public static async login(req: Request, res: Response) {
     try {
       const { email, password, deviceType, notificationToken } =
@@ -36,12 +77,15 @@ class authController {
 
       const admin: any = await loginService(email, password); // no nee dto define type
 
+      console.log(admin, "admin");
+
       if (!admin) {
         res.status(400).json({
           status: false,
           message: req.t("user.email_not_exists"),
         });
       }
+
       if (admin && admin.password) {
         const isValid = bcrypt.compareSync(password, admin.password);
         if (!isValid) {
@@ -73,6 +117,7 @@ class authController {
         deviceType,
         notificationToken
       );
+
       if (!device) {
         res.status(400).json({
           status: false,
@@ -80,21 +125,7 @@ class authController {
         });
       }
 
-      await addLog(
-        admin._id,
-        "Admin",
-        "Auth",
-        "Login",
-        admin.email + " logged in successfully"
-      );
-      admin.notificationToken = notificationToken ?? false;
-      const countryDetails = await Country.findOne({ _id: admin.countryId });
-      if (countryDetails) {
-        let getTimeZone = countryTimezone.getCountry(countryDetails?.iso2);
-        admin.timezone = getTimeZone ? getTimeZone.timezones[0] : "";
-      }
-
-      res.json({
+      res.status(200).json({
         status: true,
         data: loginResponse(admin),
         accessToken: token,
@@ -284,101 +315,23 @@ class authController {
 
   public static async getProfile(req: Request, res: Response) {
     try {
+      console.log(req.body.auth, "req.body.auth");
       const { userId } = req.body.auth.device;
 
-      let getUserProfile: any = await Admin.aggregate([
-        {
-          $match: {
-            _id: userId,
-          },
-        },
-        {
-          $lookup: {
-            from: "countries",
-            foreignField: "_id",
-            localField: "countryId",
-            as: "countryId",
-            pipeline: [
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: "states",
-            foreignField: "_id",
-            localField: "stateId",
-            as: "stateId",
-            pipeline: [
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: "cities",
-            foreignField: "_id",
-            localField: "cityId",
-            as: "cityId",
-            pipeline: [
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                  iso2: 1,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: "roles",
-            foreignField: "_id",
-            localField: "roleId",
-            as: "roleId",
-            pipeline: [
-              {
-                $project: {
-                  _id: 1,
-                  name: 1,
-                  displayName: 1,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $addFields: {
-            countryId: { $arrayElemAt: ["$countryId", 0] },
-            stateId: { $arrayElemAt: ["$stateId", 0] },
-            cityId: { $arrayElemAt: ["$cityId", 0] },
-            roleId: { $arrayElemAt: ["$roleId", 0] },
-          },
-        },
-      ]);
+      let getUserProfile = await Admin.findById(userId).select(
+        "-password -forgotPasswordToken -deletedAt -createdAt -updatedAt -__v "
+      );
 
-      if (!getUserProfile.length) {
+      if (!getUserProfile) {
         res.status(400).json({
           status: false,
           message: req.t("crud.not_found", { model: "Profile" }),
         });
       }
-      getUserProfile = getUserProfile[0];
 
       res.status(200).json({
         status: true,
-        data: updateProfileResponse(getUserProfile),
+        data: getUserProfile,
         message: req.t("crud.list", { model: "Profile" }),
       });
     } catch (error: any) {
@@ -400,7 +353,7 @@ class authController {
           message: "Admin not found with this email.",
         });
       }
-
+      // @ts-ignore
       const token = jwt.sign({ adminId: admin?._id }, env.auth.secret, {
         expiresIn: env.auth.forgotPasswordExpiredIn,
       });
@@ -416,12 +369,16 @@ class authController {
       const templateData = { link: url };
       const pathValue = env.app.host === "local" ? "src" : "dist";
 
-      // const emailTemplate = fs.readFileSync(path.join(__dirname, pathValue, "../../../../../views/email/forgotPassword.hbs"), "utf-8")
+      // const templatePath = path.join(
+      //   __dirname,
+      //   `../../../../${pathValue}/views/email/forgotPassword.hbs`
+      // );
 
       const emailTemplate = fs.readFileSync(
         path.join(__dirname, "views/email/forgotPassword.hbs"),
         "utf-8"
       );
+
       const data = {
         email,
         data: templateData,
@@ -430,7 +387,8 @@ class authController {
       };
 
       // await sendForgotPasswordEmail(data);
-      res.json({
+
+      res.status(200).json({
         status: true,
         message: req.t("user.forgot_password_reset_link"),
       });
@@ -881,7 +839,16 @@ class authController {
 
   public static async RoleList(req: Request, res: Response) {
     try {
-      const AllRole = await Role.find({});
+      const AllRole = await Role.find({}).select(
+        "-createdAt -updatedAt -deletedAt -__v -permissions -status"
+      );
+      if (!AllRole) {
+        res.status(404).json({
+          status: false,
+          message: req.t("crud.not_found", { model: "Role" }),
+        });
+      }
+
       res.status(200).json({
         status: true,
         data: AllRole,

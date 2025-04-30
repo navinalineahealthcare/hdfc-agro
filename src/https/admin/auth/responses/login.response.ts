@@ -1,5 +1,3 @@
-
-import { roleTypeName } from "../../../../utils/utils";
 import { adminType } from "../types/auth.type";
 
 export const loginResponse = (data: adminType | adminType[]) => {
@@ -16,14 +14,12 @@ const objectResponse = (admin: adminType) => {
     firstName: admin.firstName,
     lastName: admin.lastName,
     email: admin.email,
-    phoneCodeId: admin.phoneCodeId,
     phoneCode: admin.phoneCode,
     phoneNumber: admin.phoneNumber,
     image: admin.image,
     address: admin.address,
-    roleId: admin.roleId,
+    //@ts-ignore
+    role: admin.roleId.name,
     createdAt: admin.createdAt,
-    notificationToken: admin.notificationToken,
-    timezone: admin.timezone
   };
 };

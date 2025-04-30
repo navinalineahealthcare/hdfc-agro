@@ -22,9 +22,9 @@ export const env = {
   },
   auth: {
     secret: getOsEnv("JWT_SECRET")!,
-    expiresIn: getOsEnv("JWT_EXPIRES_IN")!,
-    forgotPasswordExpiredIn: toNumber("JWT_FORGOT_PASSWORD_EXPIRES_IN"),
-    deviceExpireIn: getOsEnv("DEVICE_EXPIRY_HRS")!
+    expiresIn: getOsEnv("JWT_EXPIRES_IN"),
+    forgotPasswordExpiredIn: getOsEnv("JWT_FORGOT_PASSWORD_EXPIRES_IN"),
+    deviceExpireIn: getOsEnv("DEVICE_EXPIRY_HRS")
   },
   jwtsecret: getOsEnv("JWTSECRET"),
   cors: {
