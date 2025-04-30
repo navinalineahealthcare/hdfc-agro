@@ -1,7 +1,7 @@
 {
-    "name": "alineahealth",
+    "name": "hdfc-agro",
     "version": "1.0.0",
-    "description": "alineahealth corporate",
+    "description": "alineahealth hdfc-agro",
     "main": "index.js",
     "scripts": {
         "start": "./build/index.js",

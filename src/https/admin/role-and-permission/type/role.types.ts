@@ -1,9 +1,6 @@
 import { Document } from "mongoose";
+import { statusEnum } from "../../../common/enums";
 
-export enum statusEnum {
-    ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
-}
 
 export interface roleType extends Document {
     name: string;

@@ -1,21 +1,7 @@
 import { Document } from "mongoose";
+import { devicesEnum, rolesEnum, statusEnum } from "../../../common/enums";
 
-export enum statusEnum {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-}
 
-export enum rolesEnum {
-  SUPER_ADMIN = "SUPER_ADMIN",
-  ADMIN = "ADMIN",
-  AGENT = "AGENT",
-}
-
-export enum devicesEnum {
-  IOS = "IOS",
-  ANDROID = "ANDROID",
-  WEB = "WEB",
-}
 export interface adminType extends Document {
   firstName: string;
   lastName: string;

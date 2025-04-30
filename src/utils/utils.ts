@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 // import puppeteer from "puppeteer";
-import { rolesEnum } from "../https/admin/auth/types/auth.type";
+
 import { Permission } from "../https/admin/role-and-permission/models/permission";
 import { RoleHasPermission } from "../https/admin/role-and-permission/models/roleHasPermission";
 import City from "../https/country-state-city/models/city.model";
@@ -19,6 +19,7 @@ import {
 // import { OAuth2Client } from 'google-auth-library';
 import axios from "axios";
 import { logger } from "../providers/logger";
+import { rolesEnum } from "../https/common/enums";
 // import jwt from "jsonwebtoken";
 // import jwksClient from "jwks-rsa";
 // import { verifyTokenType, VerifyAppleIdTokenResponse } from "./types";

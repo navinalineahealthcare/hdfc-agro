@@ -1,9 +1,5 @@
 import { Document } from "mongoose";
 
-export enum statusEnum {
-    ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
-}
 
 export interface moduleType extends Document {
     name: string;

@@ -1,21 +1,19 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client } from "@aws-sdk/client-s3";
 import AWS from "aws-sdk";
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import multers3 from 'multer-s3';
+import multers3 from "multer-s3";
 import { env } from "../env";
 import { ALLOWED_UPLOAD_FOLDER, UPLOAD_TYPES } from "../utils/types";
 import { validFileTypes, validFolderTypes } from "../utils/utils";
 
-const s3 = new S3Client(
-  {
-    credentials: {
-      accessKeyId: env.aws.accessKey,
-      secretAccessKey: env.aws.secretAccessKey
-    },
-    region: env.aws.region
-  }
-)
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: env.aws.accessKey,
+    secretAccessKey: env.aws.secretAccessKey,
+  },
+  region: env.aws.region,
+});
 
 AWS.config.update({
   accessKeyId: env.aws.accessKey,
@@ -28,7 +26,9 @@ const awsS3 = new AWS.S3();
 
 async function doesFolderExist(bucketName: string, folderName: string) {
   try {
-    const data:any = await awsS3.listObjectsV2({ Bucket: bucketName, Prefix: folderName }).promise();
+    const data: any = await awsS3
+      .listObjectsV2({ Bucket: bucketName, Prefix: folderName })
+      .promise();
     return data.Contents.length > 0;
   } catch (error) {
     return false;
@@ -37,26 +37,25 @@ async function doesFolderExist(bucketName: string, folderName: string) {
 
 export const UploadSingleFile =
   (type: UPLOAD_TYPES, name: string) =>
-    async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
+    configuredMulter(type).single(name)(req, res, (error) => {
+      if (error && error.code == "LIMIT_FILE_SIZE") {
+        res.status(400).send({
+          status: false,
+          message: "Maximum file size should be 30MB",
+        });
+      }
+      if (error) {
+        res.send({
+          status: false,
+          message:
+            error?.message || "Something went wrong while uploading asset",
+        });
+      }
 
-      configuredMulter(type).single(name)(req, res, (error) => {
-        if (error && error.code == "LIMIT_FILE_SIZE") {
-           res.status(400).send({
-            status: false,
-            message: "Maximum file size should be 30MB",
-          });
-        }
-        if (error) {
-           res.send({
-            status: false,
-            message:
-              error?.message || "Something went wrong while uploading asset",
-          });
-        }
-
-        next();
-      });
-    };
+      next();
+    });
+  };
 
 /**
  * a configured multer instance
@@ -80,7 +79,6 @@ const configuredMulter = (type: UPLOAD_TYPES) => {
         );
       }
 
-
       const availableTypes = validFileTypes(type);
 
       if (!availableTypes.includes(file.mimetype)) {
@@ -103,7 +101,7 @@ const configuredMulter = (type: UPLOAD_TYPES) => {
 
 const storageManager = multers3({
   s3: s3,
-  acl: 'public-read',
+  acl: "public-read",
   bucket: env.aws.bucket,
   contentType: multers3.AUTO_CONTENT_TYPE,
 
@@ -113,14 +111,12 @@ const storageManager = multers3({
     cb(null, { fieldName: file.fieldname, extension: fileExtension?.slice(1) });
   },
   key: async function (req: any, file: any, cb: any) {
-    
     // Create empty folder in s3 if folder not exist
-    if(!await doesFolderExist("corporate-dev", '/'+req.body.folder)){
+    if (!(await doesFolderExist("hdfc-agro", "/" + req.body.folder))) {
       await awsS3.putObject({
-        Key: '/'+req.body.folder, 
+        Key: "/" + req.body.folder,
         Bucket: `${env.aws.bucket}`,
       });
-
     }
 
     const { originalname } = file;
@@ -128,7 +124,5 @@ const storageManager = multers3({
     const fileExtension = originalname.slice(originalname.lastIndexOf("."));
     // cb(null, `${uniqueSuffix}${fileExtension}`);
     cb(null, req.body.folder + "/" + uniqueSuffix + fileExtension);
-  }
-
-})
-
+  },
+});
