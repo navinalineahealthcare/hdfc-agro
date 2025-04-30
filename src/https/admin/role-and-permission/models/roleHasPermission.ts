@@ -26,8 +26,14 @@ const roleHasPermissionSchema = new Schema(
             type: Date,
             default: Date.now,
         },
-        updatedAt: Date,
-        deletedAt: Date,
+        updatedAt: {
+            type: Date,
+            default: Date.now,
+        },
+        deletedAt: {
+            type: Date,
+            default: null,
+        },
     },
     { timestamps: true }
 );

@@ -1,472 +1,110 @@
 [
-    {
-        "name": "admin",
-        "displayName": "Admin Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Admins"
-            },
-            {
-                "name": "add",
-                "displayName": "Add Admins"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Admins"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Admins"
-            },
-            {
-                "name": "status",
-                "displayName": "Admins Status Change"
-            },
-            {
-                "name": "permission-update",
-                "displayName": "Admin Permission Change"
-            },
-            {
-                "name": "permission-list",
-                "displayName": "Admin Permission list"
-            }
-        ]
-    },
-    {
-        "name": "policy-pages",
-        "displayName": "Policy Pages",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Policy pages"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Policy pages"
-            }
-        ]
-    },
-    {
-        "name": "faqs",
-        "displayName": "FAQ Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View FAQs"
-            },
-            {
-                "name": "add",
-                "displayName": "Add FAQs"
-            },
-            {
-                "name": "update",
-                "displayName": "Update FAQs"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete FAQs"
-            },
-            {
-                "name": "status",
-                "displayName": "FAQs Status Change"
-            }
-        ]
-    },
-    {
-        "name": "island",
-        "displayName": "Island Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Island"
-            },
-            {
-                "name": "add",
-                "displayName": "Add Island"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Island"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Island"
-            },
-            {
-                "name": "status",
-                "displayName": "Island Status Change"
-            }
-        ]
-    },
-    {
-        "name": "contact-us",
-        "displayName": "Contact US",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Contact US"
-            },
-            {
-                "name": "replay",
-                "displayName": "Add Contact US reply"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Contact US"
-            }
-        ]
-    },
-    {
-        "name": "seller",
-        "displayName": "Seller Management",
-        "permissions": [
-            {
-                "name": "add",
-                "displayName": "Add Seller"
-            },
-            {
-                "name": "list",
-                "displayName": "View Sellers"
-            },
-            {
-                "name": "status",
-                "displayName": "Seller Status Change"
-            },
-            {
-                "name": "details",
-                "displayName": "Seller Details page"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Seller"
-            },
-            {
-                "name": "assignAgent",
-                "displayName": "Assign Agent"
-            }
-        ]
-    },
-    {
-        "name": "customer",
-        "displayName": "Customer Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Customer"
-            },
-            {
-                "name": "status",
-                "displayName": "Customer Status Change"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Customer"
-            },
-            {
-                "name": "details",
-                "displayName": "Customer Details page"
-            },
-            {
-                "name": "add",
-                "displayName": "Add Customer"
-            }
-        ]
-    },
-    {
-        "name": "seller-checklist",
-        "displayName": "Seller Checklist Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Seller Checklist"
-            }
-        ]
-    },
-    {
-        "name": "test-drive",
-        "displayName": "Test Drive Requests",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Test Drive Requests"
-            },
-            {
-                "name": "approve-reject",
-                "displayName": "Test Drive Requests Approve Reject"
-            },
-            {
-                "name": "details",
-                "displayName": "View Test Drive details"
-            },
-            {
-                "name": "update-visiting",
-                "displayName": "Update Test drive visiting status"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Test Drive Request"
-            }
-        ]
-    },
-    {
-        "name": "role-permission",
-        "displayName": "Role and Permission Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Role and Permission"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Role and Permission"
-            },
-            {
-                "name": "add",
-                "displayName": "Add  Role"
-            },
-            {
-                "name": "role-list",
-                "displayName": "View  Roles"
-            },
-            {
-                "name": "specific-user-list",
-                "displayName": "View  Specific Users"
-            }
-        ]
-    },
-    {
-        "name": "landing-page",
-        "displayName": "Landing Page Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Landing Page Details"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Landing Page Details"
-            }
-        ]
-    },
-    {
-        "name": "vehicle",
-        "displayName": "Vehicle Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Vehicle listing"
-            },
-            {
-                "name": "detailsBySlug",
-                "displayName": "View Vehicle detail page"
-            },
-            {
-                "name": "approval",
-                "displayName": "Vehicle approval"
-            },
-            {
-                "name": "editRequest-list",
-                "displayName": "View Vehicle Edit Request list"
-            },
-            {
-                "name": "editRequest-details",
-                "displayName": "View Vehicle Edit Request details"
-            },
-            {
-                "name": "editRequest-approval",
-                "displayName": "Update Vehicle Edit Request approval"
-            },
-            {
-                "name": "status",
-                "displayName": "Vehicle Status Change"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete Vehicle"
-            },
-            {
-                "name": "deleteRequest-list",
-                "displayName": "Delete Request list"
-            },
-            {
-                "name": "deleteRequest-approval",
-                "displayName": "Delete Request approval"
-            },
-            {
-                "name": "save",
-                "displayName": "Add Vehicle"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Vehicle Details"
-            },
-            {
-                "name": "fees-and-emi-list",
-                "displayName": "List Fees and EMIs"
-            },
-            {
-                "name": "fees-and-emi-update",
-                "displayName": "Update Fees and EMIs"
-            },
-            {
-                "name":  "lock-price-request-list",
-                "displayName": "Lock price Request list"
-            },
-            {
-                "name": "lock-price-request-details",
-                "displayName": "Lock Price Request Details"
-            },
-            {
-                "name": "lock-price-request-update",
-                "displayName": "Lock price request approval"
-            },
-            {
-                "name": "seller-payments-list",
-                "displayName": "Seller Payment list"
-            },
-            {
-                "name": "purchasedSummary-list",
-                "displayName": "Purchased Summary list"
-            }
-        ]
-    },
-    {
-        "name": "pre-qualified",
-        "displayName": "Pre Qualified Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Pre Qualified Requests"
-            },
-            {
-                "name": "details",
-                "displayName": "View Pre Qualified Details"
-            },
-            {
-                "name": "approval",
-                "displayName": "Pre Qualified approval"
-            }
-        ]
-    },
-    {
-        "name": "client-management",
-        "displayName": "Client Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Client Requests"
-            },
-            {
-                "name": "request-approval",
-                "displayName": "Buy Request Approval"
-            },
-            {
-                "name": "details",
-                "displayName": "View Client Request details"
-            }
-        ]
-    },
-    {
-        "name": "vehicle-deals",
-        "displayName": "Deals Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View Deals"
-            },
-            {
-                "name": "details",
-                "displayName": "View Deals Details"
-            },
-            {
-                "name": "add",
-                "displayName": "Add Deals"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Deals"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete deals"
-            },
-            {
-                "name": "approval",
-                "displayName": "Deal Approval"
-            }
-        ]
-    },
-    {
-        "name": "vehicle-highlighting",
-        "displayName": "Vehicle Highlighting",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "Vehicle Highlighting listing"
-            },
-            {
-                "name": "update",
-                "displayName": "Update Vehicle Highlighting"
-            }
-        ]
-    },
-    {
-        "name": "notification-management",
-        "displayName": "Notification Management",
-        "permissions": [
-            {
-                "name": "send-bulk-notification",
-                "displayName": "Send Notification"
-            },
-            {
-                "name": "send-bulk-email",
-                "displayName": "Send Bulk Emails"
-            },
-            {
-                "name": "send-bulk-sms",
-                "displayName": "Send Bulk SMS"
-            }
-        ]
-    },
-    {
-        "name": "task-management",
-        "displayName": "Task Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View tasks"
-            },
-            {
-                "name": "details",
-                "displayName": "View task details"
-            },
-            {
-                "name": "add",
-                "displayName": "Add task"
-            },
-            {
-                "name": "update",
-                "displayName": "Update task"
-            },
-            {
-                "name": "update-status",
-                "displayName": "Update task status"
-            },
-            {
-                "name": "delete",
-                "displayName": "Delete task"
-            }
-        ]
-    },
-    {
-        "name": "dashboard",
-        "displayName": "Dashboard Management",
-        "permissions": [
-            {
-                "name": "list",
-                "displayName": "View dashboard"
-            }
-        ]
-    }
+  {
+    "name": "doctor",
+    "displayName": "utility Doctor",
+    "permissions": [
+      {
+        "name": "open case list",
+        "displayName": "doctor open case"
+      },
+      {
+        "name": "assigned cases list",
+        "displayName": "doctor assigned cases"
+      },
+      {
+        "name": "search cases",
+        "displayName": "doctor search cases"
+      },
+      {
+        "name": "assigned",
+        "displayName": "doctor assigned"
+      },
+      {
+        "name": "update",
+        "displayName": "doctor update"
+      },
+      {
+        "name": "details",
+        "displayName": "details doctor"
+      },
+      {
+        "name": "play",
+        "displayName": "play audio"
+      },
+      {
+        "name": "remark",
+        "displayName": "remake notes"
+      },
+      {
+        "name": "call",
+        "displayName": "call audio"
+      },
+      {
+        "name": "mer",
+        "displayName": "mer notes"
+      },
+      {
+        "name": "unlink",
+        "displayName": "unlink mer"
+      },
+      {
+        "name": "disposition",
+        "displayName": "disposition notes"
+      }
+    ]
+  },
+  {
+    "name": "qc",
+    "displayName": "utility QC",
+    "permissions": [
+      {
+        "name": "open case list",
+        "displayName": "qc open case"
+      },
+      {
+        "name": "assigned cases list",
+        "displayName": "qc assigned cases"
+      },
+      {
+        "name": "search cases",
+        "displayName": "qc search cases"
+      },
+      {
+        "name": "assigned",
+        "displayName": "qc assigned"
+      },
+      {
+        "name": "update",
+        "displayName": "qc update"
+      },
+      {
+        "name": "details",
+        "displayName": "details qc"
+      },
+      {
+        "name": "play",
+        "displayName": "play audio"
+      },
+      {
+        "name": "remark",
+        "displayName": "remake notes"
+      },
+      {
+        "name": "call",
+        "displayName": "call audio"
+      },
+      {
+        "name": "mer",
+        "displayName": "mer notes"
+      },
+      {
+        "name": "unlink",
+        "displayName": "unlink mer"
+      },
+      {
+        "name": "disposition",
+        "displayName": "disposition notes"
+      }
+    ]
+  }
 ]

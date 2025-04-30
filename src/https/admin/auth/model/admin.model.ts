@@ -12,9 +12,13 @@ const adminSchema = new Schema(
       type: String,
       required: true,
     },
-    email: {
+    contactCode: {
       type: String,
       required: true,
+      unique: true,
+    },
+    email: {
+      type: String,
     },
     password: {
       type: String,
@@ -38,9 +42,6 @@ const adminSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "roles",
     },
-    phoneCodeId: {
-      type: Schema.Types.ObjectId,
-    },
     phoneCode: {
       type: String,
       required: true,
@@ -51,10 +52,11 @@ const adminSchema = new Schema(
     },
     address: {
       type: String,
-      required: true,
+      default: null,
     },
     image: {
       type: String,
+      default: null,
     },
     phonePreferenceRequest: {
       type: Boolean,
@@ -87,16 +89,14 @@ const adminSchema = new Schema(
     notificationToken: {
       type: String,
     },
-    uhc_employee_id: {
+    uhcEmployeeId: {
       type: String,
     },
     changepasswordBlocked: {
       type: Boolean,
       default: false,
     },
-    userID: {
-      type: String,
-    },
+   
     officeId: {
       type: Schema.Types.ObjectId,
     },
@@ -118,9 +118,22 @@ const adminSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    
-    updatedAt: Date,
-    deletedAt: Date,
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "admins", // assuming reporting to another admin
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "admins", // assuming reporting to another admin
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -1,17 +1,22 @@
 [
-    {
-        "name": "Super_Admin",
-        "displayName": "Super admin",
-        "description": ""
-    },
-    {
-        "name": "Admin",
-        "displayName": "Admin",
-        "description": ""
-    },
-    {
-        "name": "Agent",
-        "displayName": "Agent",
-        "description": ""
-    }
+  {
+    "name": "Super_Admin",
+    "displayName": "Super admin",
+    "description": ""
+  },
+  {
+    "name": "Admin",
+    "displayName": "Admin",
+    "description": ""
+  },
+  {
+    "name": "QC",
+    "displayName": "QC",
+    "description": ""
+  },
+  {
+    "name": "DOCTOR",
+    "displayName": "DOCTOR",
+    "description": ""
+  }
 ]

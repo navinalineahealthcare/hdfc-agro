@@ -1,37 +1,49 @@
 import bcrypt from "bcryptjs";
-import { adminType, rolesEnum } from "../https/admin/auth/types/auth.type";
+import { adminType, IAdminType } from "../https/admin/auth/types/auth.type";
 import mongoose from "mongoose";
 import { Admin } from "../https/admin/auth/model/admin.model";
 import { connection } from "../providers/db";
 import { Role } from "../https/admin/role-and-permission/models/role";
+import { rolesEnum, statusEnum } from "../https/common/enums";
 
 const seed = async () => {
   try {
     await connection();
 
-    interface adminInputType {
-      firstName: string;
-      lastName: string;
-      email: string;
-      password: string;
-      role: string;
-    }
-    const adminData: adminInputType[] = [
+    const adminData: IAdminType[] = [
       {
         firstName: "Developer",
         lastName: "alineahealthcare",
         email: "developer.alineahealthcare@yopmail.com",
-        password: await bcrypt.hash("Admin@1234", 10),
-        role: "Super_Admin",
+        password: await bcrypt.hash("123456", 10),
+        role: rolesEnum.SUPER_ADMIN,
+        contactCode: "developer.alineahealthcare",
+        phoneCode: "+91",
+        phoneNumber: "1234567890",
+        status: statusEnum.ACTIVE,
+        roleId: undefined,
+        image: "",
+        address: "",
+        notificationToken: undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: undefined,
+        updatedBy: undefined,
+        deletedAt: null,
+        forgotPasswordToken: "",
       },
       {
         firstName: "Navin",
         lastName: "kumar",
+        contactCode: "navin.kumar",
         email: "navin.Kumar@alineahealthcare.in",
-        password: await bcrypt.hash("Admin@1234", 10),
+        password: await bcrypt.hash("123456", 10),
         role: "Super_Admin",
+        forgotPasswordToken: "",
+        status: "",
+        phoneCode: "",
+        phoneNumber: ""
       },
-    
     ];
 
     for (const data of adminData) {
@@ -48,7 +60,6 @@ const seed = async () => {
           upsert: true,
         }
       );
-
       const roleExits = await Role.findOne({ name: data.role });
       if (roleExits) {
         await Admin.findOneAndUpdate(

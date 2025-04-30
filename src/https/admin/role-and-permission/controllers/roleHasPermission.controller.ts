@@ -96,12 +96,17 @@ export class RoleHasPermissionController {
           $unset: ["permissions"],
         },
       ]);
+      if (rolePermissions.length === 0) {
+        res.status(404).json({ error: "Role permissions not found" });
+      }
+      // Sort the rolePermissions array by module name in ascending order
       rolePermissions.sort((a: any, b: any) => {
         const moduleNameA = a.module.name.toUpperCase();
         const moduleNameB = b.module.name.toUpperCase();
 
         return moduleNameA.localeCompare(moduleNameB);
       });
+
       res.status(200).json({
         status: true,
         data: rolePermissions,
@@ -218,7 +223,10 @@ export class RoleHasPermissionController {
 
   public static async RoleList(req: Request, res: Response) {
     try {
-      const AllRole = await Role.find({});
+      const AllRole = await Role.find({
+        deletedAt: null,
+      }).sort({ createdAt: -1 });
+
       res.status(200).json({
         status: true,
         data: AllRole,
@@ -236,6 +244,7 @@ export class RoleHasPermissionController {
       const { page, perPage } = req.body.pagination;
       const { sortBy, sortType } = req.body.validatedSortData;
       const id = req.body.auth.user;
+
       let filterQuery: any = {
         deletedAt: null,
         _id: { $ne: id },
@@ -340,17 +349,10 @@ export class RoleHasPermissionController {
           },
         },
         {
-          $unwind:
-            /**
-             * path: Path to the array field.
-             * includeArrayIndex: Optional name for index.
-             * preserveNullAndEmptyArrays: Optional
-             *   toggle to unwind null and empty values.
-             */
-            {
-              path: "$users.stateId",
-              preserveNullAndEmptyArrays: true,
-            },
+          $unwind: {
+            path: "$users.stateId",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {

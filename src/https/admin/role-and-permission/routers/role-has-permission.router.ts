@@ -8,7 +8,10 @@ import {
 import { idRoleHasPermissionParamsRequest } from "../requests/id.params.filter.request";
 import { RoleHasPermissionController } from "../controllers/roleHasPermission.controller";
 import { rolePermissionUpdateReuest } from "../requests/role.permission.update.request";
-import { roleCreateRequest, RoleFilterRequest } from "../requests/role.add.request";
+import {
+  roleCreateRequest,
+  RoleFilterRequest,
+} from "../requests/role.add.request";
 import { paginationCleaner } from "../../../../middleware/Pagination";
 
 const router = Router();
