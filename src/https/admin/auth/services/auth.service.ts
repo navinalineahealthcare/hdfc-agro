@@ -23,6 +23,24 @@ export const loginService = async (email: string, password: string) => {
   return null;
 };
 
+export const loginServiceByContactCode = async (contactCode: string) => {
+    
+  const findAdmin = await Admin.findOne({ contactCode: contactCode }).populate({
+    path: "roleId",
+    select: "id displayName name",
+  });
+
+  if (!findAdmin) {
+    return null;
+  }
+
+  if (findAdmin && findAdmin.password) {
+    return findAdmin;
+    // }
+  }
+  return null;
+};
+
 export const createToken = async (admin: any) => {
   try {
     if (!admin) {

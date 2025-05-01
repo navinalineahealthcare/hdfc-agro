@@ -18,6 +18,7 @@ import {
   createToken,
   deleteDevice,
   loginService,
+  loginServiceByContactCode,
 } from "../services/auth.service";
 
 import fs from "fs";
@@ -71,10 +72,20 @@ class authController {
 
   public static async login(req: Request, res: Response) {
     try {
-      const { email, password, deviceType, notificationToken } =
+      const { email, contactCode, password, deviceType, notificationToken } =
         req.body.validatedData;
 
-      const admin: any = await loginService(email, password);
+      let admin: any = null;
+      if (email) {
+        admin = await loginService(email, password);
+      } else if (contactCode) {
+        admin = await loginServiceByContactCode(contactCode);
+      } else {
+        res.status(400).json({
+          status: false,
+          message: req.t("user.email_not_exists"),
+        });
+      }
 
       if (!admin) {
         res.status(400).json({
