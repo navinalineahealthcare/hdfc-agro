@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { RoleHasPermission } from "../models/roleHasPermission";
 import { Types } from "mongoose";
-import { Role } from "../models/role";
 import {
   createDefultRolePermission,
   pagination,
 } from "../../../../utils/utils";
 import { addLog } from "../../../common/log/services/log.service";
 import { UserHasPermission } from "../../auth/model/userHasPermission";
-import { Admin } from "../../auth/model/admin.model";
+import { Role } from "../models/role";
+import { RoleHasPermission } from "../models/roleHasPermission";
 
 export class RoleHasPermissionController {
   public static async RolePermissionList(req: Request, res: Response) {

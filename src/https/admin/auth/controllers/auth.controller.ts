@@ -1,31 +1,29 @@
+import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
+import * as jwt from "jsonwebtoken";
+import mongoose, { Types } from "mongoose";
+import { env } from "../../../../env";
+import { verifyFileisAvailable } from "../../../../utils/utils";
+import {
+  deleteMediaurl,
+  updateMediaurl,
+} from "../../../upload/services/media.service";
+
+import { Role } from "../../role-and-permission/models/role";
+import { Admin } from "../model/admin.model";
+import { loginResponse } from "../responses/login.response";
+import { updateProfileResponse } from "../responses/update.profile.response";
 import {
   createDevice,
   createToken,
   deleteDevice,
   loginService,
 } from "../services/auth.service";
-import bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
-import mongoose, { Types } from "mongoose";
-import { env } from "../../../../env";
-import { verifyFileisAvailable } from "../../../../utils/utils";
-import { addLog } from "../../../common/log/services/log.service";
-import {
-  deleteMediaurl,
-  updateMediaurl,
-} from "../../../upload/services/media.service";
-import { Role } from "../../role-and-permission/models/role";
-import { Admin } from "../model/admin.model";
-import { loginResponse } from "../responses/login.response";
-import { updateProfileResponse } from "../responses/update.profile.response";
 
-import countryTimezone from "countries-and-timezones";
 import fs from "fs";
 import passport from "passport";
 import path from "path";
 import { statusEnum } from "../../../common/enums";
-import Country from "../../../country-state-city/models/country.model";
 import { Device } from "../model/device.model";
 
 class authController {
@@ -34,7 +32,7 @@ class authController {
       const { email, password, firstName, lastName } = req.body.validatedData;
 
       const existingAdmin = await Admin.findOne({ email: email });
-      
+
       if (existingAdmin) {
         res.status(400).json({
           status: false,
@@ -70,14 +68,13 @@ class authController {
       });
     }
   }
+
   public static async login(req: Request, res: Response) {
     try {
       const { email, password, deviceType, notificationToken } =
         req.body.validatedData;
 
-      const admin: any = await loginService(email, password); // no nee dto define type
-
-      console.log(admin, "admin");
+      const admin: any = await loginService(email, password);
 
       if (!admin) {
         res.status(400).json({

@@ -14,7 +14,7 @@
         "seed:role-has-permission": "yarn ts-node-dev src/seeders/role-has-permission.ts",
         "seed:admin": "yarn ts-node-dev src/seeders/admin.ts",
         "seed:country-state-city": "yarn ts-node-dev src/seeders/country-state-city.ts",
-        "seed:policy-pages": "yarn ts-node-dev src/seeders/policyPage.ts"
+        "seed:adminXlsx": "yarn ts-node-dev src/seeders/adminFromXlsx.ts"
     },
     "author": "Navin Kumar",
     "license": "ISC",

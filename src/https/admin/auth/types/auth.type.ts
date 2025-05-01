@@ -1,29 +1,39 @@
-import { Document, Schema } from "mongoose";
+import { Document, Schema, Types } from "mongoose";
 import { devicesEnum, rolesEnum, statusEnum } from "../../../common/enums";
-
-// export interface adminType extends Document {
+// export interface IAdminType {
 //   firstName: string;
 //   lastName: string;
-//   email: string;
 //   contactCode: string;
-//   password: string | null;
-//   forgotPasswordToken: string | null;
-//   socialId?: string | null;
-//   status: statusEnum;
-//   role: rolesEnum;
-//   roleId: string;
-//   image: string;
-//   phoneCodeId: string;
+//   email?: string;
+//   password: string;
+//   forgotPasswordToken: string;
+//   status: string;
+//   role: string;
+//   roleId?: Schema.Types.ObjectId;
 //   phoneCode: string;
 //   phoneNumber: string;
-//   address: string;
-//   notificationToken?: any;
-//   timezone?: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   createdBy: string;
-//   updatedBy?: string;
-//   deletedAt: Date | null;
+//   address?: string | null;
+//   image?: string | null;
+//   phonePreferenceRequest?: boolean;
+//   internetPreferenceRequest?: boolean;
+//   emailPreferenceRequest?: boolean;
+//   phonePreferenceUpdate?: boolean;
+//   internetPreferenceUpdate?: boolean;
+//   emailPreferenceUpdate?: boolean;
+//   reportPreference?: boolean;
+//   notificationToken?: string;
+//   uhcEmployeeId?: string;
+//   changepasswordBlocked?: boolean;
+//   officeId?: Schema.Types.ObjectId;
+//   insuDCUHCId?: string;
+//   insuDCUHCflag?: boolean;
+//   reportTo?: Schema.Types.ObjectId;
+//   addressID?: Schema.Types.ObjectId;
+//   createdBy?: Schema.Types.ObjectId | string;
+//   updatedAt?: Date;
+//   updatedBy?: Schema.Types.ObjectId | string;
+//   createdAt?: Date;
+//   deletedAt?: Date | null;
 // }
 
 export interface IAdminType {
@@ -35,10 +45,16 @@ export interface IAdminType {
   forgotPasswordToken: string;
   status: string;
   role: string;
-  roleId?: Schema.Types.ObjectId;
+  roleId?: Types.ObjectId | string;
   phoneCode: string;
   phoneNumber: string;
-  address?: string | null;
+  homeAddID?: string;
+  address?: string;
+  address2?: string | null;
+  city?: string | null;
+  dist?: string | null;
+  state?: string | null;
+  pincode?: string | null;
   image?: string | null;
   phonePreferenceRequest?: boolean;
   internetPreferenceRequest?: boolean;
@@ -50,15 +66,14 @@ export interface IAdminType {
   notificationToken?: string;
   uhcEmployeeId?: string;
   changepasswordBlocked?: boolean;
-  officeId?: Schema.Types.ObjectId;
+  officeId?: Types.ObjectId;
   insuDCUHCId?: string;
   insuDCUHCflag?: boolean;
-  reportTo?: Schema.Types.ObjectId;
-  addressID?: Schema.Types.ObjectId;
-  createdBy?: Schema.Types.ObjectId | string;
-  updatedAt?: Date;
-  updatedBy?: Schema.Types.ObjectId | string;
+  reportTo?: Types.ObjectId;
+  createdBy?: Types.ObjectId | string;
+  updatedBy?: Types.ObjectId | string;
   createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date | null;
 }
 

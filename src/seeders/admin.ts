@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import { adminType, IAdminType } from "../https/admin/auth/types/auth.type";
 import mongoose from "mongoose";
 import { Admin } from "../https/admin/auth/model/admin.model";
-import { connection } from "../providers/db";
+import { IAdminType } from "../https/admin/auth/types/auth.type";
 import { Role } from "../https/admin/role-and-permission/models/role";
-import { rolesEnum, statusEnum } from "../https/common/enums";
+import { statusEnum } from "../https/common/enums";
+import { connection } from "../providers/db";
 
 const seed = async () => {
   try {

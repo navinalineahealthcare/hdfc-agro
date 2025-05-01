@@ -2,6 +2,7 @@ import { model, Schema, Model } from "mongoose";
 import { adminType } from "../types/auth.type";
 import { statusEnum } from "../../../common/enums";
 
+
 const adminSchema = new Schema(
   {
     firstName: {
@@ -26,7 +27,7 @@ const adminSchema = new Schema(
     },
     forgotPasswordToken: {
       type: String,
-      required: true,
+      default: null,
     },
     status: {
       type: String,
@@ -41,6 +42,7 @@ const adminSchema = new Schema(
     roleId: {
       type: Schema.Types.ObjectId,
       ref: "roles",
+      required: true,
     },
     phoneCode: {
       type: String,
@@ -51,6 +53,26 @@ const adminSchema = new Schema(
       required: true,
     },
     address: {
+      type: String,
+      required: true,
+    },
+    address2: {
+      type: String,
+      default: null,
+    },
+    city: {
+      type: String,
+      default: null,
+    },
+    dist: {
+      type: String,
+      default: null,
+    },
+    state: {
+      type: String,
+      default: null,
+    },
+    pincode: {
       type: String,
       default: null,
     },
@@ -96,12 +118,18 @@ const adminSchema = new Schema(
       type: Boolean,
       default: false,
     },
-   
+    homeAddID: {
+      type: String,
+      default: null,
+    },
     officeId: {
       type: Schema.Types.ObjectId,
+      ref: "offices",
+      default: null,
     },
     insuDCUHCId: {
       type: String,
+      default: null,
     },
     insuDCUHCflag: {
       type: Boolean,
@@ -110,17 +138,18 @@ const adminSchema = new Schema(
     reportTo: {
       type: Schema.Types.ObjectId,
       ref: "admins", // assuming reporting to another admin
-    },
-    addressID: {
-      type: Schema.Types.ObjectId,
+      default: null,
     },
     createdAt: {
       type: Date,
       default: Date.now,
+      
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "admins", // assuming reporting to another admin
+      ref: "admins", 
+      default: null,
+
     },
     updatedAt: {
       type: Date,
@@ -128,7 +157,8 @@ const adminSchema = new Schema(
     },
     updatedBy: {
       type: Schema.Types.ObjectId,
-      ref: "admins", // assuming reporting to another admin
+      ref: "admins",
+      default: null,
     },
     deletedAt: {
       type: Date,
