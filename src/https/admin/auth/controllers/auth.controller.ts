@@ -28,6 +28,7 @@ import { statusEnum } from "../../../common/enums";
 import { Device } from "../model/device.model";
 
 class authController {
+  
   public static async register(req: Request, res: Response) {
     try {
       const { email, password, firstName, lastName } = req.body.validatedData;
@@ -76,6 +77,7 @@ class authController {
         req.body.validatedData;
 
       let admin: any = null;
+
       if (email) {
         admin = await loginService(email, password);
       } else if (contactCode) {
@@ -323,7 +325,6 @@ class authController {
 
   public static async getProfile(req: Request, res: Response) {
     try {
-      console.log(req.body.auth, "req.body.auth");
       const { userId } = req.body.auth.device;
 
       let getUserProfile = await Admin.findById(userId).select(

@@ -39,12 +39,14 @@ export const UploadSingleFile =
   (type: UPLOAD_TYPES, name: string) =>
   async (req: Request, res: Response, next: NextFunction) => {
     configuredMulter(type).single(name)(req, res, (error) => {
+    
       if (error && error.code == "LIMIT_FILE_SIZE") {
         res.status(400).send({
           status: false,
           message: "Maximum file size should be 30MB",
         });
       }
+
       if (error) {
         res.send({
           status: false,
@@ -62,7 +64,6 @@ export const UploadSingleFile =
  * @param type
  * @returns
  */
-
 
 const configuredMulter = (type: UPLOAD_TYPES) => {
   return multer({

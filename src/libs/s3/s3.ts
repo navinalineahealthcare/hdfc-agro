@@ -72,11 +72,7 @@ export class S3 {
 
   public static async uploadBinaryFile(binaryData: string, fileKey: string) {
     return new Promise(async (resolve, reject) => {
-      // AWS.config.update({
-      //   accessKeyId: env.aws.accessKey,
-      //   secretAccessKey: env.aws.secretAccessKey,
-      //   region: env.aws.region,
-      // });
+ 
 
       var s3 = new AWS.S3();
 

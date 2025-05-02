@@ -48,18 +48,13 @@ export enum UPLOAD_TYPES {
   FILE,
   IMAGE_VIDEO,
   PDF
+
 }
 
 export enum UPLOAD_FOLDER {
-  BANNER = "BANNER",
-  ISLAND = "ISLAND",
-  ADMIN = "ADMIN",
-  SELLER = "SELLER",
-  CUSTOMER = "CUSTOMER",
-  VEHICLE = "VEHICLE",
-  FRAMES = "FRAMES",
-  DOCUMENT = "DOCUMENT",
-  CHATS = "CHATS",
+  Dump_HDFC_Cases = "DUMPHDFCCASES",
+  HDFC_Cases = "HDFCCASES",
+  HDFC_Cases_Images = "HDFCCASESIMAGES",
 }
 
 export const ALLOWED_IMAGE_TYPE = [
@@ -75,15 +70,12 @@ export const ALLOWED_VIDEO_TYPE = ["video/mp4", "video/mov", "video/quicktime", 
 export const ALLOWED_FILE_TYPES = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 
 export const ALLOWED_UPLOAD_FOLDER = [
-  "BANNER",
-  "ISLAND",
-  "ADMIN",
-  "SELLER",
-  "CUSTOMER",
-  "VEHICLE",
-  "FRAMES",
-  "DOCUMENT",
-  "CHATS"
+  "HDFCCASESIMAGES",
+  "HDFCCASES",
+  "DUMPHDFCCASES",
+  "HDFCCASESIMAGES",
+  "HDFCCASES",
+  "DUMPHDFCCASES",
 ]
 
 export interface verifyTokenType {

@@ -7,7 +7,7 @@ const router = Router();
 
 router.post(
     "/",
-    UploadSingleFile(UPLOAD_TYPES.IMAGE_VIDEO, 'file'),
+    UploadSingleFile(UPLOAD_TYPES.FILE, 'file'),
     UploadController.uploadData
 )
 
