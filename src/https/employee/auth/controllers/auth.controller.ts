@@ -8,7 +8,7 @@ import {
 import { loginResponse } from "../responses/login.response";
 import { updateProfileResponse } from "../responses/update.profile.response";
 import { Admin } from "../model/admin.model";
-import { statusEnum } from "../types/auth.type";
+
 import * as jwt from "jsonwebtoken";
 import { env } from "../../../../env";
 import bcrypt from "bcryptjs";
@@ -20,8 +20,7 @@ import {
   randomNumber,
 } from "../../../../utils/utils";
 import mongoose, { Types } from "mongoose";
-import { Role } from "../../role-and-permission/models/role";
-import { RoleHasPermission } from "../../role-and-permission/models/roleHasPermission";
+
 import { UserHasPermission } from "../model/userHasPermission";
 import { addLog } from "../../../common/log/services/log.service";
 import {
@@ -36,6 +35,8 @@ import { Device } from "../model/device.model";
 import Country from "../../../country-state-city/models/country.model";
 import countryTimezone from "countries-and-timezones";
 import passport from "passport";
+import { statusEnum } from "../../../common/enums";
+import { Role } from "../../../admin/role-and-permission/models/role";
 class authController {
   public static async login(req: Request, res: Response) {
     try {
@@ -408,7 +409,7 @@ class authController {
           message: "Admin not found with this email.",
         });
       }
-
+// @ts-ignore
       const token = jwt.sign({ adminId: admin?._id }, env.auth.secret, {
         expiresIn: env.auth.forgotPasswordExpiredIn,
       });
@@ -568,356 +569,8 @@ class authController {
     });
   }
 
-  public static async permissionList(req: Request, res: Response) {
-    try {
-      const id = req.body.auth.user;
 
-      let admin: any = await Admin.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(id),
-          },
-        },
-        {
-          $lookup: {
-            from: "roles",
-            foreignField: "_id",
-            localField: "roleId",
-            as: "roles",
-          },
-        },
-        {
-          $lookup: {
-            from: "rolehaspermissions",
-            foreignField: "roleId",
-            localField: "roleId",
-            as: "rolehasPermissions",
-            pipeline: [
-              {
-                $lookup: {
-                  from: "roles",
-                  localField: "roleId",
-                  foreignField: "_id",
-                  as: "role",
-                },
-              },
-              {
-                $unwind: {
-                  path: "$role",
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  from: "modules",
-                  localField: "moduleId",
-                  foreignField: "_id",
-                  as: "module",
-                },
-              },
-              {
-                $unwind: {
-                  path: "$module",
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  from: "permissions",
-                  localField: "permissionId",
-                  foreignField: "_id",
-                  as: "module.permissions",
-                },
-              },
-              {
-                $unwind: {
-                  path: "$module.permissions",
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $addFields: {
-                  "module.permissions.isGranted": "$isGranted",
-                },
-              },
-              {
-                $group: {
-                  _id: "$module._id",
-                  module: {
-                    $first: "$module",
-                  },
-                  role: {
-                    $first: "$role",
-                  },
-                  permissions: {
-                    $push: "$module.permissions",
-                  },
-                  createdAt: {
-                    $first: "$createdAt",
-                  },
-                  updatedAt: {
-                    $first: "$updatedAt",
-                  },
-                },
-              },
-              {
-                $addFields: {
-                  "module.permissions": {
-                    $filter: {
-                      input: "$permissions",
-                      as: "score",
-                      cond: { $eq: ["$$score.isGranted", true] },
-                    },
-                  },
-                },
-              },
-              {
-                $unset: ["permissions"],
-              },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: "userhaspermissions",
-            foreignField: "userId",
-            localField: "_id",
-            as: "userhaspermissions",
-          },
-        },
-        {
-          $addFields: {
-            roles: { $arrayElemAt: ["$roles", 0] },
-          },
-        },
-      ]);
 
-      if (!admin.length) {
-        res.status(404).json({
-          status: false,
-          message: req.t("crud.not_found", { model: "Admin" }),
-        });
-      }
-
-      admin = admin[0];
-
-      if (!admin.roles) {
-        res.status(404).json({
-          status: false,
-          message: req.t("crud.not_found", { model: "Role" }),
-        });
-      }
-
-      const RoleDetails = admin.roles;
-
-      let roleHasPermissionsArray = [...admin.rolehasPermissions];
-
-      let userHasPermissions = admin.userhaspermissions;
-
-      // const admin = await Admin.findOne({ _id: id });
-
-      // if (!admin) {
-      //    res.status(404).json({ error: 'Admin not found' });
-      // }
-
-      // const RoleDetails = await Role.findOne({ _id: admin.roleId });
-
-      // if (!Role) {
-      //    res.status(404).json({ error: 'Role not found' });
-      // }
-
-      // const roleHasPermissions = await RoleHasPermission.aggregate(
-
-      //     [
-      //         {
-      //             '$match': {
-      //                 'roleId': new Types.ObjectId(RoleDetails?._id)
-      //             }
-      //         }, {
-      //             '$lookup': {
-      //                 'from': 'roles',
-      //                 'localField': 'roleId',
-      //                 'foreignField': '_id',
-      //                 'as': 'role'
-      //             }
-      //         }, {
-      //             '$unwind': {
-      //                 'path': '$role',
-      //                 'preserveNullAndEmptyArrays': true
-      //             }
-      //         }, {
-      //             '$lookup': {
-      //                 'from': 'modules',
-      //                 'localField': 'moduleId',
-      //                 'foreignField': '_id',
-      //                 'as': 'module'
-      //             }
-      //         }, {
-      //             '$unwind': {
-      //                 'path': '$module',
-      //                 'preserveNullAndEmptyArrays': true
-      //             }
-      //         }, {
-      //             '$lookup': {
-      //                 'from': 'permissions',
-      //                 'localField': 'permissionId',
-      //                 'foreignField': '_id',
-      //                 'as': 'module.permissions'
-      //             }
-      //         }, {
-      //             '$unwind': {
-      //                 'path': '$module.permissions',
-      //                 'preserveNullAndEmptyArrays': true
-      //             }
-      //         }, {
-      //             '$addFields': {
-      //                 'module.permissions.isGranted': '$isGranted'
-      //             }
-      //         }, {
-      //             '$group': {
-      //                 '_id': '$module._id',
-      //                 'module': {
-      //                     '$first': '$module'
-      //                 },
-      //                 'role': {
-      //                     '$first': '$role'
-      //                 },
-      //                 'permissions': {
-      //                     '$push': '$module.permissions'
-      //                 },
-      //                 'createdAt': {
-      //                     '$first': '$createdAt'
-      //                 },
-      //                 'updatedAt': {
-      //                     '$first': '$updatedAt'
-      //                 }
-      //             }
-      //         },
-      //         {
-      //             '$addFields': {
-      //                 // 'module.permissions': '$permissions'
-      //                 'module.permissions': {
-      //                     '$filter': {
-      //                         'input': "$permissions",
-      //                         'as': "score",
-      //                         'cond': { '$eq': ["$$score.isGranted", true] }
-      //                     }
-      //                 }
-      //             }
-      //         }, {
-      //             '$unset': [
-      //                 'permissions'
-      //             ]
-      //         }
-      //     ]
-      // );
-
-      // let roleHasPermissionsArray = [...roleHasPermissions]
-
-      // const userHasPermissions = await UserHasPermission.find({
-      //     userId: id
-      // })
-
-      userHasPermissions.forEach((userHasPermissionItem: any) => {
-        const roleIndex = roleHasPermissionsArray.findIndex((item) => {
-          return (
-            item.module._id.toString() ===
-            userHasPermissionItem.moduleId.toString()
-          );
-        });
-
-        if (roleIndex > -1) {
-          const permissionArray =
-            roleHasPermissionsArray[roleIndex].module.permissions;
-          permissionArray.forEach((permissionItem: any, index: number) => {
-            if (
-              permissionItem._id.toString() ===
-              userHasPermissionItem.permissionId.toString()
-            ) {
-              roleHasPermissionsArray[roleIndex].module.permissions[
-                index
-              ].isGranted = userHasPermissionItem.isGranted;
-            }
-          });
-        }
-      });
-      // let filteredRoleHasPermissionsArray
-      if (roleHasPermissionsArray) {
-        const filteredRoleHasPermissionsArray = roleHasPermissionsArray.filter(
-          (item) => {
-            const permissions = item.module.permissions;
-            const isGrantedPermissions = permissions.filter(
-              (permission: any) => permission.isGranted
-            );
-            return isGrantedPermissions.length > 0;
-          }
-        );
-
-        if (filteredRoleHasPermissionsArray.length > 0) {
-          res.status(200).json({
-            status: true,
-            data: filteredRoleHasPermissionsArray,
-            message: req.t("crud.list", { model: "Permissions" }),
-          });
-        } else {
-          res.status(401).json({
-            status: false,
-            message: req.t(
-              "You Don't have permission please contact to alineahealth super admin."
-            ),
-          });
-        }
-      } else {
-        res.status(401).json({
-          status: false,
-          message: req.t(
-            "You Don't have permission please contact to alineahealth super admin."
-          ),
-        });
-      }
-      // if (roleHasPermissionsArray) {
-      //    res.status(200).json({
-      //         status: true,
-      //         data: roleHasPermissionsArray,
-      //         message: req.t("crud.list", { model: "Permissions" })
-      //     })
-      // }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  public static async RoleList(req: Request, res: Response) {
-    try {
-      const AllRole = await Role.find({});
-      res.status(200).json({
-        status: true,
-        data: AllRole,
-        message: req.t("crud.list", { model: "Role" }),
-      });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  public static async setNotificationToken(req: Request, res: Response) {
-    try {
-      const { _id } = req.body.auth.device;
-      const { notificationToken } = req.body.validatedData;
-
-      await Device.updateOne({ _id: _id }, { $set: { notificationToken } });
-
-      res.status(200).json({
-        status: true,
-        message: req.t("crud.updated", { model: "Notification token" }),
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        status: false,
-        message: error.message,
-      });
-    }
-  }
 }
 
 export default authController;

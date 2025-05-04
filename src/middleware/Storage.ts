@@ -38,8 +38,21 @@ async function doesFolderExist(bucketName: string, folderName: string) {
 export const UploadSingleFile =
   (type: UPLOAD_TYPES, name: string) =>
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(type, name, req.body.folder, "------------------->>");
+    if (!req.body.folder) {
+      res.status(400).send({
+        status: false,
+        message: "Please provide folder name",
+      });
+    }
+    if (!req.file) {
+      res.status(400).send({
+        status: false,
+        message: "Please provide file",
+      });
+    }
     configuredMulter(type).single(name)(req, res, (error) => {
-    
+      console.log("------------------->>", type, req.file, error);
       if (error && error.code == "LIMIT_FILE_SIZE") {
         res.status(400).send({
           status: false,
@@ -66,12 +79,15 @@ export const UploadSingleFile =
  */
 
 const configuredMulter = (type: UPLOAD_TYPES) => {
+  console.log("------------------->>", type);
+
   return multer({
     storage: storageManager,
     limits: {
       fileSize: 1024 * 1024 * 30,
     },
     fileFilter: function (req, file, cb) {
+      console.log("--------------->>>>", file.mimetype, req.body.folder);
       const value = validFolderTypes(req.body.folder);
 
       if (!value) {
