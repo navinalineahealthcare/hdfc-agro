@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import fs from "fs";
-// import puppeteer from "puppeteer";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import { Permission } from "../https/admin/role-and-permission/models/permission";
 import { RoleHasPermission } from "../https/admin/role-and-permission/models/roleHasPermission";
@@ -16,14 +16,12 @@ import {
   UPLOAD_FOLDER,
   UPLOAD_TYPES,
 } from "./types";
-// import { OAuth2Client } from 'google-auth-library';
+
 import axios from "axios";
 import { logger } from "../providers/logger";
 import { rolesEnum } from "../https/common/enums";
-// import jwt from "jsonwebtoken";
-// import jwksClient from "jwks-rsa";
-// import { verifyTokenType, VerifyAppleIdTokenResponse } from "./types";
-// @ts-ignore
+import { env } from "../env";
+import { s3Client } from "../middleware/Storage";
 
 export const pagination = (
   totalCount: number,
@@ -50,7 +48,11 @@ export const validFileTypes = (type: UPLOAD_TYPES) => {
   } else if (type === UPLOAD_TYPES.FILE) {
     return ALLOWED_FILE_TYPES;
   } else if (type === UPLOAD_TYPES.IMAGE_VIDEO) {
-    return [...ALLOWED_IMAGE_TYPE, ...ALLOWED_VIDEO_TYPE, ...ALLOWED_FILE_TYPES];
+    return [
+      ...ALLOWED_IMAGE_TYPE,
+      ...ALLOWED_VIDEO_TYPE,
+      ...ALLOWED_FILE_TYPES,
+    ];
   }
   return [];
 };
@@ -66,12 +68,12 @@ export const validFolderTypes = (type: UPLOAD_FOLDER) => {
 export const generatePassword = () => {
   const passwordLength = 10;
   const allowedChars = {
-    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    lower: 'abcdefghijklmnopqrstuvwxyz',
-    number: '0123456789',
+    upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    lower: "abcdefghijklmnopqrstuvwxyz",
+    number: "0123456789",
   };
 
-  let password = '';
+  let password = "";
   let includeUpper = false;
   let includeLower = false;
   let includeNumber = false;
@@ -148,7 +150,7 @@ export const convertVideoToFrames = async (
   } catch (error) {
     return error;
   }
-}
+};
 
 export const deleteS3Media = async (url: string) => {
   try {
@@ -157,78 +159,87 @@ export const deleteS3Media = async (url: string) => {
   } catch (error: any) {
     return false;
   }
-}
+};
+export const removeFromS3 = async ({ key }: { key: string }) => {
+  const bucketParams = { Bucket: env.aws.bucket, Key: key };
+  try {
+    const data = await s3Client.send(new DeleteObjectCommand(bucketParams));
+    return data;
+  } catch (err) {
+    logger.error("Error in remove from s3 bucket" + (err as any)?.message);
+    return null;
+  }
+};
 
-export const verifyFileisAvailable = async (url: string, folderName: string) => {
+export const verifyFileisAvailable = async (
+  url: string,
+  folderName: string
+) => {
   try {
     if (url.indexOf(folderName) == -1) {
       return false;
     }
-    await S3.verifyFile(url)
+    await S3.verifyFile(url);
     return true;
   } catch (error: any) {
     return false;
   }
-}
-
+};
 
 export const roleTypeName = (role: rolesEnum) => {
-  let roleName
+  let roleName;
   if (role === rolesEnum.SUPER_ADMIN) {
-    return roleName = "Super Admin"
+    return (roleName = "Super Admin");
   } else if (role === rolesEnum.ADMIN) {
-    return roleName = "Admin"
+    return (roleName = "Admin");
   } else {
-    return roleName = "Agent"
+    return (roleName = "QC");
   }
-}
+};
 export const verifyCountry = async (id: string) => {
   try {
     const country = await Country.findOne({
-      _id: id
-    })
+      _id: id,
+    });
     if (!country) {
-      throw Error("error=========")
+      throw Error("error=========");
     }
-
-  } catch (error: any) {
-  }
-}
+  } catch (error: any) {}
+};
 
 export const verifyState = async (id: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const state = await State.findOne({
-        _id: id
-      })
+        _id: id,
+      });
       if (!state) {
-        return reject('State not found');
+        return reject("State not found");
       }
 
       return resolve(true);
     } catch (error: any) {
       return reject(error);
     }
-  })
-}
+  });
+};
 
 export const verifyCity = async (id: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const city = await City.findOne({
-        _id: id
-      })
+        _id: id,
+      });
       if (!city) {
-        return reject('City not found');
+        return reject("City not found");
       }
 
       return resolve(true);
     } catch (error: any) {
       return reject(error);
     }
-  })
-}
-
+  });
+};
 
 export const randomNumber = (prefix?: string) => {
   return prefix ?? "" + (Math.floor(Math.random() * 9000000000) + 1000000000);
@@ -250,43 +261,48 @@ export enum statusEnumText {
   REJECTED = "Rejected",
   PENDING = "Pending",
   EXPIRED = "Expired",
-  COMPLETED = "Completed"
+  COMPLETED = "Completed",
 }
 
 export enum testDriveVistingStatusEnumText {
   PENDING = "Pending",
   VISITED = "Visited",
-  MISSED = "Missed"
+  MISSED = "Missed",
 }
 
 export enum activityEnumStatusText {
   ACTIVE = "Active",
-  INACTIVE = "Inactive"
+  INACTIVE = "Inactive",
 }
 
-export const APIGETRequest = async (url: string, params: object, logType: string) => {
-  return new Promise( async(resolve, reject) => {
+export const APIGETRequest = async (
+  url: string,
+  params: object,
+  logType: string
+) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const { data } = await axios.get(url, {
-        params
+        params,
       });
-      logger.info(logType +": API url: "+ url + " API response: "+ JSON.stringify(data));
+      logger.info(
+        logType + ": API url: " + url + " API response: " + JSON.stringify(data)
+      );
       resolve(data);
     } catch (error: any) {
-      logger.error(logType + ": " + error.message)
+      logger.error(logType + ": " + error.message);
       reject(error);
     }
-  })
-}
+  });
+};
 
 export const createDefultRolePermission = async (roleId: string) => {
   const allPermissions = await Permission.find();
   for (const permissionData of allPermissions) {
-
     const permissionExists = await RoleHasPermission.findOne({
       permissionId: permissionData._id,
       moduleId: permissionData.moduleId,
-      roleId: roleId
+      roleId: roleId,
     });
 
     if (permissionExists) {
@@ -294,25 +310,25 @@ export const createDefultRolePermission = async (roleId: string) => {
         {
           permissionId: permissionData._id,
           moduleId: permissionData.moduleId,
-          roleId: roleId
+          roleId: roleId,
         },
         {
           $set: {
             permissionId: permissionData._id,
             moduleId: permissionData.moduleId,
-            roleId: roleId
-          }
+            roleId: roleId,
+          },
         }
       );
     } else {
       await RoleHasPermission.create({
         permissionId: permissionData._id,
         moduleId: permissionData.moduleId,
-        roleId: roleId
+        roleId: roleId,
       });
     }
   }
-}
+};
 
 export const formatTimelast = (totalSeconds: any) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -324,4 +340,62 @@ export const formatTimelast = (totalSeconds: any) => {
   const paddedSeconds = String(seconds).padStart(2, "0");
 
   return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+};
+export const sanitizedFileName = (name: string) => {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s.-]+/g, "_")
+    .replace(/\s+/g, "_")
+    .replace(/_+/g, "_");
+};
+
+export const maskMobile = (mobile: number): string => {
+  const str = mobile.toString();
+  return str.slice(0, 3) + "****" + str.slice(-3);
+};
+
+export function getMonthName(
+  monthIndex = new Date().getMonth(),
+  year = new Date().getFullYear
+): string {
+  const date = new Date(monthIndex, monthIndex); // Year doesn't matter for the name
+  return date.toLocaleString("default", { month: "long" });
+}
+
+export const internalUploadToS3 = async (
+  fileBuffer: Uint8Array,
+  fileName: string,
+  mimeType: string,
+  requestId: string
+) => {
+  const bucketName = env.aws.bucket;
+  // const sanitized = sanitizedFileName(fileName);
+  // const key = `${Date.now()}-${sanitized}`;
+  const today = new Date();
+  const destination = requestId
+    ? `OptumDev/${today.getFullYear()}/${getMonthName()}/Optum Global Advantage/${requestId}/confirmationPdf/${fileName}`
+    : `OptumDev/${today.getFullYear()}/${getMonthName()}/Optum/confirmationPdf/${fileName}`;
+
+  const bucketParams = {
+    Bucket: bucketName,
+    Key: destination,
+    Body: fileBuffer,
+    ContentType: mimeType,
+  };
+
+  try {
+    await s3Client.send(new PutObjectCommand(bucketParams));
+    const fileUrl = `https://${bucketName}.s3.${env.aws.bucket}.amazonaws.com/${destination}`;
+    logger.info("File uploaded successfully to S3: " + fileUrl, {
+      log: "info",
+    });
+    return { destination, url: fileUrl };
+  } catch (err) {
+    logger.error("Error in internalUploadToS3: " + (err as any)?.message, {
+      log: "error",
+      data: err,
+    });
+    return null;
+  }
 };
