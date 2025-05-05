@@ -9,6 +9,7 @@ import { UploadKeyQueryRequest } from "../requests/upload.request";
 const router = Router();
 
 router.post("/", verifyToken, s3Upload, UploadController.s3FileUploadService);
+
 router.get(
   "/media",
   verifyToken,

@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { HDFCCasesRequest } from "../types/hdfcCases.type";
-import { statusEnum } from "../../enums";
+import { CaseStatusEnum, statusEnum } from "../../enums";
 
 const HDFCCasesSchema = new mongoose.Schema(
   {
     uniqueIdNum: { type: String, default: null },
-    fromDate: { type: Date, default: null },
-    toDate: { type: Date, default: null },
+    fromDate: { type: String, default: null },
+    toDate: { type: String, default: null },
     proposalNo: { type: String, default: null },
     proposerName: { type: String, default: null },
     insuredName: { type: String, default: null },
@@ -22,7 +22,7 @@ const HDFCCasesSchema = new mongoose.Schema(
     agentName: { type: String, default: null },
     agentEmailId: { type: String, default: null },
     agentMobile: { type: String, default: null },
-    clientDob: { type: Date, default: null },
+    clientDob: { type: String, default: null },
     sumInsured: { type: Number, default: null },
     premium: { type: Number, default: null },
     portability: { type: String, default: null },
@@ -37,8 +37,8 @@ const HDFCCasesSchema = new mongoose.Schema(
     updatedAt: { type: Date, default: Date.now },
     status: {
       type: String,
-      enum: statusEnum,
-      default: statusEnum.ACTIVE,
+      enum: CaseStatusEnum,
+      default: CaseStatusEnum.RECEIVED,
       required: true,
     },
     deletedAt: { type: Date, default: null },

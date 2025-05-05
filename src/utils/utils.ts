@@ -1,6 +1,11 @@
 import { execSync } from "child_process";
+import * as XLSX from "xlsx";
 import fs from "fs";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
 
 import { Permission } from "../https/admin/role-and-permission/models/permission";
 import { RoleHasPermission } from "../https/admin/role-and-permission/models/roleHasPermission";
@@ -363,19 +368,22 @@ export function getMonthName(
   return date.toLocaleString("default", { month: "long" });
 }
 
-export const internalUploadToS3 = async (
-  fileBuffer: Uint8Array,
-  fileName: string,
-  mimeType: string,
-  requestId: string
-) => {
+export const internalUploadToS3 = async ({
+  fileBuffer,
+  fileName,
+  mimeType,
+  requestId,
+  destinationUrl,
+}: {
+  fileBuffer: Uint8Array;
+  fileName: string;
+  mimeType: string;
+  requestId: string;
+  destinationUrl: string;
+}) => {
   const bucketName = env.aws.bucket;
-  // const sanitized = sanitizedFileName(fileName);
-  // const key = `${Date.now()}-${sanitized}`;
   const today = new Date();
-  const destination = requestId
-    ? `OptumDev/${today.getFullYear()}/${getMonthName()}/Optum Global Advantage/${requestId}/confirmationPdf/${fileName}`
-    : `OptumDev/${today.getFullYear()}/${getMonthName()}/Optum/confirmationPdf/${fileName}`;
+  const destination = `${destinationUrl}/${today.getFullYear()}/${getMonthName()}/egro/${requestId}/${fileName}`;
 
   const bucketParams = {
     Bucket: bucketName,
@@ -399,3 +407,41 @@ export const internalUploadToS3 = async (
     return null;
   }
 };
+
+export async function getFileBufferFromS3(key: string): Promise<Buffer> {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: env.aws.bucket,
+      Key: key,
+    });
+    const { Body } = await s3Client.send(command);
+
+    const streamToBuffer = async (stream: any): Promise<Buffer> => {
+      const chunks: any[] = [];
+      for await (const chunk of stream) chunks.push(chunk);
+      return Buffer.concat(chunks);
+    };
+
+    if (!Body) throw new Error("No file body returned from S3.");
+    const buffer = await streamToBuffer(Body);
+    return buffer;
+  } catch (error) {
+    logger.error("Error fetching file from S3 getFileBufferFromS3:", error);
+    throw error;
+  }
+}
+
+export const parseExcelDate = (value: any): string | null => {
+  if (typeof value === 'number') {
+    const date = XLSX.SSF.parse_date_code(value);
+    if (!date) return null;
+    const dd = String(date.d).padStart(2, '0');
+    const mm = String(date.m).padStart(2, '0');
+    const yyyy = date.y;
+    return `${dd}/${mm}/${yyyy}`;
+  } else if (typeof value === 'string') {
+    return value; // Already a proper date string
+  }
+  return null;
+};
+

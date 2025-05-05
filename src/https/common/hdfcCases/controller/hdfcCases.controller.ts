@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as XLSX from "xlsx";
-import path from "path";
-import fs from "fs";
+import { getFileBufferFromS3, parseExcelDate } from "../../../../utils/utils";
+import HDFCCases from "../models/hdfcCases.model";
 
 export class hdfcDumpCasesController {
   public static async dumpHDFCCases(
@@ -9,37 +9,69 @@ export class hdfcDumpCasesController {
     res: Response
   ): Promise<void> {
     try {
-      if (!req.file) {
-        res.status(400).json({ status: false, message: "No file uploaded" });
-        return;
-      }
+      const { xlsxFileKey } = req.body.validatedData;
+      const buffer = await getFileBufferFromS3(xlsxFileKey);
+      const workbook = XLSX.read(buffer, { type: "buffer" });
 
-      const workbook = XLSX.readFile(req.file.path);
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
 
+      // const mappedData = jsonData.map((row: any) => ({
+      //   uniqueIdNum: row["UNIQUE ID NUM"]?.toString() || null,
+      //   fromDate: row["FROM DATE"]?.toString() ?? null,
+      //   toDate: row["TO DATE"]?.toString() ?? null,
+      //   // createdDate: row["CREATED DATE"] ?? null,
+      //   proposalNo: row["PROPOSALNO"]?.toString() || null,
+      //   proposerName: row["PROPOSER NAME"] || null,
+      //   insuredName: row["INSURED NAME"] || null,
+      //   age: row["AGE"] || null,
+      //   gender: row["GENDER"] || null,
+      //   contactNo: row["CONTACTNO"]?.toString() || null,
+      //   customerEmailId: row["CUSTOMER EMAIL ID"]?.toString().toLowerCase() || null,
+      //   address: row["ADDRESS"] || null,
+      //   city: row["CITY"] || null,
+      //   state: row["STATE"] || null,
+      //   pincode: row["PINCODE"]?.toString() || null,
+      //   agentCode: row["AGENT CODE"]?.toString() || null,
+      //   agentName: row["AGENT NAME"] || null,
+      //   agentEmailId: row["AGENT EMAIL ID"]?.toString().toLowerCase() || null,
+      //   agentMobile: row["AGENT MOBILE"]?.toString() || null,
+      //   clientDob: row["CLIENT DOB"].toString() ?? null,
+      //   sumInsured: row["SUM INSURED"] || null,
+      //   premium: row["PREMIUM"] || null,
+      //   portability: row["PORTABILITY"] || null,
+      //   productName: row["PRODUCT NAME"] || null,
+      //   productCode: row["PRODUCT CODE"]?.toString() || null,
+      //   caseType: row["CASE TYPE"] || null,
+      //   testCategory: row["TEST CATEGORY"] || null,
+      //   tpaName: row["TPA NAME"] || null,
+      //   tpaRemark: row["TPA REMARK"] || null,
+      //   txtZone: row["TXT ZONE"] || null,
+      // }));
+
       const mappedData = jsonData.map((row: any) => ({
         uniqueIdNum: row["UNIQUE ID NUM"]?.toString() || null,
-        fromDate: row["FROM DATE"] ? new Date(row["FROM DATE"]) : null,
-        toDate: row["TO DATE"] ? new Date(row["TO DATE"]) : null,
-        createdDate: row["CREATED DATE"] ? new Date(row["CREATED DATE"]) : null,
+        fromDate: parseExcelDate(row["FROM DATE"]),
+        toDate: parseExcelDate(row["TO DATE"]),
+        // createdDate: parseExcelDate(row["CREATED DATE"]),
         proposalNo: row["PROPOSALNO"]?.toString() || null,
         proposerName: row["PROPOSER NAME"] || null,
         insuredName: row["INSURED NAME"] || null,
         age: row["AGE"] || null,
         gender: row["GENDER"] || null,
         contactNo: row["CONTACTNO"]?.toString() || null,
-        customerEmailId: row["CUSTOMER EMAIL ID"] || null,
+        customerEmailId:
+          row["CUSTOMER EMAIL ID"]?.toString().toLowerCase() || null,
         address: row["ADDRESS"] || null,
         city: row["CITY"] || null,
         state: row["STATE"] || null,
         pincode: row["PINCODE"]?.toString() || null,
         agentCode: row["AGENT CODE"]?.toString() || null,
         agentName: row["AGENT NAME"] || null,
-        agentEmailId: row["AGENT EMAIL ID"] || null,
+        agentEmailId: row["AGENT EMAIL ID"]?.toString().toLowerCase() || null,
         agentMobile: row["AGENT MOBILE"]?.toString() || null,
-        clientDob: row["CLIENT DOB"] ? new Date(row["CLIENT DOB"]) : null,
+        clientDob: parseExcelDate(row["CLIENT DOB"]),
         sumInsured: row["SUM INSURED"] || null,
         premium: row["PREMIUM"] || null,
         portability: row["PORTABILITY"] || null,
@@ -52,14 +84,13 @@ export class hdfcDumpCasesController {
         txtZone: row["TXT ZONE"] || null,
       }));
 
-      console.log(mappedData);
-      
-      // await UserData.insertMany(mappedData);
-
-      fs.unlinkSync(req.file.path); // cleanup uploaded file
+      const mappedDataWithCreatedDate = await HDFCCases.insertMany(mappedData, {
+        ordered: true,
+      });
 
       res.status(200).json({
         status: true,
+        data: mappedDataWithCreatedDate,
         message: "dump HDFC Cases successfully",
       });
     } catch (error) {

@@ -24,7 +24,8 @@ Promise.all([
 
   httpServer.start();
   if (env.node === "development" || env.node === "production") {
-    cron.setup();
+    // cron.setup();
+    console.log("cron job not started in development mode");
   }
 });
 
