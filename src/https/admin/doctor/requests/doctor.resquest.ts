@@ -14,3 +14,6 @@ export const DoctorAssignRequest = object().shape({
     .min(1, "At least one proposerId is required")
     .required(),
 });
+export const assignParamIdRequest = object().shape({
+  id: string().required(),
+});
