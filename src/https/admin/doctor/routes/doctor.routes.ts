@@ -1,10 +1,12 @@
 import { Router } from "express";
-import activityLogsController from "../controllers/doctor.controller";
-import doctorController from "../controllers/doctor.controller";
-import { RequestQueryValidator, RequestSortValidator } from "../../../../middleware/RequestValidator";
 import { paginationCleaner } from "../../../../middleware/Pagination";
-import { RoleFilterRequest } from "../../role-and-permission/requests/role.add.request";
-import { DoctorFilterRequest } from "../requests/doctor.resquest";
+import {
+  RequestQueryValidator,
+  RequestSortValidator,
+  RequestValidator,
+} from "../../../../middleware/RequestValidator";
+import doctorController from "../controllers/doctor.controller";
+import { DoctorAssignRequest, DoctorFilterRequest } from "../requests/doctor.resquest";
 const router = Router();
 
 router.get(
@@ -13,6 +15,18 @@ router.get(
   paginationCleaner,
   RequestQueryValidator(DoctorFilterRequest),
   doctorController.doctorOpencaseList
+);
+router.get(
+  "/close-list",
+  RequestSortValidator(["proposerName", "proposalNo", "premium", "createdAt"]),
+  paginationCleaner,
+  RequestQueryValidator(DoctorFilterRequest),
+  doctorController.doctorClosedCaseList
+);
+router.post(
+  "/assign-doctor",
+  RequestValidator(DoctorAssignRequest),
+  doctorController.doctorAssignCase
 );
 
 export default router;

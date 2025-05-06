@@ -17,39 +17,13 @@ export class hdfcDumpCasesController {
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-      // const mappedData = jsonData.map((row: any) => ({
-      //   uniqueIdNum: row["UNIQUE ID NUM"]?.toString() || null,
-      //   fromDate: row["FROM DATE"]?.toString() ?? null,
-      //   toDate: row["TO DATE"]?.toString() ?? null,
-      //   // createdDate: row["CREATED DATE"] ?? null,
-      //   proposalNo: row["PROPOSALNO"]?.toString() || null,
-      //   proposerName: row["PROPOSER NAME"] || null,
-      //   insuredName: row["INSURED NAME"] || null,
-      //   age: row["AGE"] || null,
-      //   gender: row["GENDER"] || null,
-      //   contactNo: row["CONTACTNO"]?.toString() || null,
-      //   customerEmailId: row["CUSTOMER EMAIL ID"]?.toString().toLowerCase() || null,
-      //   address: row["ADDRESS"] || null,
-      //   city: row["CITY"] || null,
-      //   state: row["STATE"] || null,
-      //   pincode: row["PINCODE"]?.toString() || null,
-      //   agentCode: row["AGENT CODE"]?.toString() || null,
-      //   agentName: row["AGENT NAME"] || null,
-      //   agentEmailId: row["AGENT EMAIL ID"]?.toString().toLowerCase() || null,
-      //   agentMobile: row["AGENT MOBILE"]?.toString() || null,
-      //   clientDob: row["CLIENT DOB"].toString() ?? null,
-      //   sumInsured: row["SUM INSURED"] || null,
-      //   premium: row["PREMIUM"] || null,
-      //   portability: row["PORTABILITY"] || null,
-      //   productName: row["PRODUCT NAME"] || null,
-      //   productCode: row["PRODUCT CODE"]?.toString() || null,
-      //   caseType: row["CASE TYPE"] || null,
-      //   testCategory: row["TEST CATEGORY"] || null,
-      //   tpaName: row["TPA NAME"] || null,
-      //   tpaRemark: row["TPA REMARK"] || null,
-      //   txtZone: row["TXT ZONE"] || null,
-      // }));
-
+      if (!jsonData || jsonData.length === 0) {
+        res.status(400).json({
+          status: false,
+          message: "No data found in the Excel file",
+        });
+        return;
+      }
       const mappedData = jsonData.map((row: any) => ({
         uniqueIdNum: row["UNIQUE ID NUM"]?.toString() || null,
         fromDate: parseExcelDate(row["FROM DATE"]),
@@ -84,15 +58,26 @@ export class hdfcDumpCasesController {
         txtZone: row["TXT ZONE"] || null,
       }));
 
-      const mappedDataWithCreatedDate = await HDFCCases.insertMany(mappedData, {
-        ordered: true,
-      });
+      // const mappedDataWithCreatedDate = await HDFCCases.insertMany(mappedData, {
+      //   ordered: true,
+      // });
 
+      const bulkOps = mappedData.map((record) => ({
+        updateOne: {
+          filter: { uniqueIdNum: record.uniqueIdNum },
+          update: { $set: record },
+          upsert: true,
+        },
+      }));
+      
+      const bulkResult = await HDFCCases.bulkWrite(bulkOps, { ordered: false });
+      
       res.status(200).json({
         status: true,
-        data: mappedDataWithCreatedDate,
+        data: bulkResult,
         message: "dump HDFC Cases successfully",
       });
+      
     } catch (error) {
       console.error("Error importing Excel data:", error);
       res.status(500).send({
