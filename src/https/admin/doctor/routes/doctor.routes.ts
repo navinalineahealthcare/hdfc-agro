@@ -10,7 +10,7 @@ import { DoctorAssignRequest, DoctorFilterRequest } from "../requests/doctor.res
 const router = Router();
 
 router.get(
-  "/list",
+  "/open-case-list",
   RequestSortValidator(["proposerName", "proposalNo", "premium", "createdAt"]),
   paginationCleaner,
   RequestQueryValidator(DoctorFilterRequest),
@@ -27,6 +27,10 @@ router.post(
   "/assign-doctor",
   RequestValidator(DoctorAssignRequest),
   doctorController.doctorAssignCase
+);
+router.get(
+  "/list",
+  doctorController.doctorList
 );
 
 export default router;

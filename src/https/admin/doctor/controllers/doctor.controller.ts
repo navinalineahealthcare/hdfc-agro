@@ -75,7 +75,6 @@ export default class doctorController {
       });
     }
   }
-
   public static async doctorClosedCaseList(req: Request, res: Response) {
     try {
       const { proposerName, productName, fromDate, toDate, search } =
@@ -86,7 +85,7 @@ export default class doctorController {
 
       // Filter query
       const filterQuery: any = {
-        status: { $ne: CaseStatusEnum.CLOSED },
+        status: CaseStatusEnum.CLOSED || CaseStatusEnum.CANCELLED,
         deletedAt: null,
       };
 
@@ -170,12 +169,12 @@ export default class doctorController {
       }).lean();
 
       if (!role) {
-        return res.status(404).json({
+        res.status(404).json({
           status: false,
           message: "Role not found",
         });
       }
-      const objectId = role._id;
+      const objectId = role?._id;
       console.log(objectId, "objectId");
 
       const doctorList = await Admin.find({
@@ -183,7 +182,7 @@ export default class doctorController {
         status: statusEnum.ACTIVE,
         deletedAt: null,
       })
-        .select("name email contactNo")
+        .select("firstName lastName email")
         .sort({ createdAt: -1 })
         .lean();
 
