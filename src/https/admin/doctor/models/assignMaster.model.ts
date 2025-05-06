@@ -1,51 +1,78 @@
 import { model, Schema, Document } from "mongoose";
-import { statusEnum } from "../../../common/enums";
-import { DoctorType } from "../types/doctor.types";
+import { CaseStatusEnum, statusEnum } from "../../../common/enums";
+import { IAssignMaster } from "../types/doctor.types";
 
-const assignMasterSchema = new Schema<DoctorType>(
+const assignMasterSchema = new Schema<IAssignMaster>(
   {
-    name: {
+    requestDate: {
+      type: Date,
+      default: Date.now,
+    },
+    proposalNo: {
       type: String,
       required: true,
     },
-    userId: {
-      type: String,
-      default: null,
-    },
-    registrationNo: {
+    proposerName: {
       type: String,
       required: true,
     },
-    photoUrl: {
-      type: String,
-      default: null,
-    },
-    signatureUrl: {
-      type: String,
-      default: null,
-    },
-    stampUrl: {
-      type: String,
-      default: null,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-
-    createdBy: {
+    insuredName: {
       type: String,
       required: true,
     },
-    type: {
+    mobileNo: {
       type: String,
-      default: null,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
-      enum: statusEnum,
-      default: statusEnum.ACTIVE,
+      enum: Object.values(CaseStatusEnum),
+      default: CaseStatusEnum.RECALL,
       required: true,
+    },
+    doctorId: {
+      type: Schema.Types.ObjectId,
+      ref: "admins",
+      default: null,
+    },
+    openCaseId: {
+      type: Schema.Types.ObjectId,
+      ref: "HDFCCases",
+      default: null,
+    },
+    alternateMobileNo: {
+      type: String,
+      default: null,
+    },
+    language: {
+      type: String,
+      default: null,
+    },
+    callbackDate: {
+      type: Date,
+      default: null,
+    },
+    remark: {
+      type: [String],
+      default: [],
+    },
+    callViaPhone: {
+      type: Boolean,
+      default: false,
+    },
+    dispositionId: {
+      type: Schema.Types.ObjectId,
+      ref: "dispositions",
+      default: null,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "admins",
+      default: null,
     },
     createdAt: {
       type: Date,
@@ -59,13 +86,10 @@ const assignMasterSchema = new Schema<DoctorType>(
       type: Date,
       default: null,
     },
-    dcid: {
-      type: String,
-    },
   },
   { timestamps: true }
 );
 
-const AssignMaster = model<DoctorType>("assign_masters", assignMasterSchema);
+const AssignMaster = model<IAssignMaster>("assign_masters", assignMasterSchema);
 
 export { AssignMaster };

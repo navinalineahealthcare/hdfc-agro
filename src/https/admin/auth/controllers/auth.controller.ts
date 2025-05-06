@@ -76,7 +76,7 @@ class authController {
         req.body.validatedData;
 
       let admin: any = null;
-      
+
 
       if (email) {
         admin = await loginService(email ?? contactCode, password);
@@ -329,7 +329,11 @@ class authController {
 
       let getUserProfile = await Admin.findById(userId).select(
         "-password -forgotPasswordToken -deletedAt -createdAt -updatedAt -__v "
-      );
+      ).populate(
+        {
+        path: "roleId",
+        select: "-createdAt -updatedAt -deletedAt -__v",
+        });
 
       if (!getUserProfile) {
         res.status(400).json({

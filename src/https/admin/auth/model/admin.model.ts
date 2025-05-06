@@ -149,7 +149,6 @@ const adminSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "admins", 
       default: null,
-
     },
     updatedAt: {
       type: Date,

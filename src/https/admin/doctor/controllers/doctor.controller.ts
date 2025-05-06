@@ -3,6 +3,8 @@ import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 import { CaseStatusEnum, statusEnum } from "../../../common/enums";
 import { pagination } from "../../../../utils/utils";
 import { logger } from "../../../../providers/logger";
+import { Admin } from "../../auth/model/admin.model";
+import { Role } from "../../role-and-permission/models/role";
 
 export default class doctorController {
   public static async doctorOpencaseList(req: Request, res: Response) {
@@ -73,6 +75,7 @@ export default class doctorController {
       });
     }
   }
+
   public static async doctorClosedCaseList(req: Request, res: Response) {
     try {
       const { proposerName, productName, fromDate, toDate, search } =
@@ -141,9 +144,54 @@ export default class doctorController {
       });
     }
   }
-
   public static async doctorAssignCase(req: Request, res: Response) {
     try {
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: error.message,
+        });
+      } else {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  }
+  public static async doctorList(req: Request, res: Response) {
+    try {
+      const role = await Role.findOne({
+        name: "DOCTOR",
+        deletedAt: null,
+      }).lean();
+
+      if (!role) {
+        return res.status(404).json({
+          status: false,
+          message: "Role not found",
+        });
+      }
+      const objectId = role._id;
+      console.log(objectId, "objectId");
+
+      const doctorList = await Admin.find({
+        roleId: objectId,
+        status: statusEnum.ACTIVE,
+        deletedAt: null,
+      })
+        .select("name email contactNo")
+        .sort({ createdAt: -1 })
+        .lean();
+
+      res.status(200).json({
+        status: true,
+        data: doctorList,
+        message: req.t("crud.list", { model: "Doctor" }),
+      });
     } catch (error) {
       if (error instanceof Error) {
         logger.error("Error in doctorAssignCase: ", error);
