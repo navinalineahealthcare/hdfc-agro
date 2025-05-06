@@ -22,6 +22,13 @@ router.get(
   doctorController.doctorOpencaseList
 );
 router.get(
+  "/assigned-list",
+  RequestSortValidator(["proposerName", "proposalNo", "premium", "createdAt"]),
+  paginationCleaner,
+  RequestQueryValidator(DoctorFilterRequest),
+  doctorController.doctorAssigncaseList
+);
+router.get(
   "/close-list",
   RequestSortValidator(["proposerName", "proposalNo", "premium", "createdAt"]),
   paginationCleaner,

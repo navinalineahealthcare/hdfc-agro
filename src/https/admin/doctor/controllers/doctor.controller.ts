@@ -148,80 +148,62 @@ export default class doctorController {
   public static async doctorAssignCase(req: Request, res: Response) {
     try {
       const { id: assignedToId } = req.body.validatedParamsData;
-      const id = req.body.auth.user;
+      const userId = req.body.auth.user;
       const { casesIds } = req.body.validatedData;
 
-      const assignedDataExists = await Admin.findById({
-        _id: assignedToId,
-      }).lean();
-
-      console.log(assignedDataExists, "assignedDataExists");
-
+      // Check if assigned doctor exists
+      const assignedDataExists = await Admin.findById(assignedToId).lean();
       if (!assignedDataExists) {
         res.status(404).json({
           status: false,
-          message: "Assigned data not found",
+          message: "Assigned doctor not found",
         });
       }
 
-      const HDFCCasesAssigned = await HDFCCases.find({
+      // Fetch only RECEIVED and active cases
+      const validCases = await HDFCCases.find({
         _id: { $in: casesIds },
         status: CaseStatusEnum.RECEIVED,
         deletedAt: null,
       }).lean();
 
-      console.log(HDFCCasesAssigned, "HDFCCasesAssigned");
-      if (HDFCCasesAssigned.length === 0) {
+      if (validCases.length === 0) {
         res.status(404).json({
           status: false,
-          message: "No cases found with the provided IDs",
+          message: "No valid cases found with the provided IDs",
         });
       }
 
-      const caseDocs = await Promise.all(
-        casesIds.map(async (caseId: string) => {
-          const HDFCCasesData = await HDFCCases.findById(caseId).lean();
+      // Prepare documents for assignment
+      const caseDocs = validCases.map((caseData) => ({
+        requestDate: caseData.createdAt,
+        proposalNo: caseData.proposalNo,
+        proposerName: caseData.proposerName,
+        insuredName: caseData.insuredName,
+        mobileNo: caseData.contactNo,
+        email: caseData.customerEmailId ?? null,
+        status: CaseStatusEnum.RECALL,
+        doctorId: new Types.ObjectId(assignedToId),
+        openCaseId: caseData._id,
+        alternateMobileNo: null,
+        language: null,
+        callbackDate: null,
+        remark: [],
+        callViaPhone: false,
+        dispositionId: null,
+        createdBy: new Types.ObjectId(userId),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      }));
 
-          if (!HDFCCasesData) {
-            throw new Error(`Case with ID ${caseId} not found`);
-          }
-
-          return {
-            requestDate: HDFCCasesData.createdAt,
-            proposalNo: HDFCCasesData.proposalNo,
-            proposerName: HDFCCasesData.proposerName,
-            insuredName: HDFCCasesData.insuredName,
-            mobileNo: HDFCCasesData.contactNo,
-            email: HDFCCasesData?.customerEmailId ?? null,
-            status: CaseStatusEnum.RECALL,
-            doctorId: new Types.ObjectId(assignedToId),
-            openCaseId: HDFCCasesData._id,
-            alternateMobileNo: null,
-            language: null,
-            callbackDate: null,
-            remark: [],
-            callViaPhone: false,
-            dispositionId: null,
-            createdBy: new Types.ObjectId(id),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deletedAt: null,
-          };
-        })
-      );
-
-      console.log(caseDocs, "caseDocs");
-      // Run insertMany
+      // Insert new assignments
       await AssignMaster.insertMany(caseDocs);
 
+      // Update the original cases' status to RECALL
       await HDFCCases.updateMany(
-        {
-          _id: { $in: casesIds },
-          // status: CaseStatusEnum.RECEIVED,
-          // deletedAt: null,
-        },
-        { $set: { status: CaseStatusEnum.RECALL } },
-        { new: true }
+        { _id: { $in: validCases.map((c) => c._id) } },
+        { $set: { status: CaseStatusEnum.RECALL } }
       );
 
       res.status(200).json({
@@ -229,7 +211,7 @@ export default class doctorController {
         message: "Cases assigned successfully",
       });
     } catch (error) {
-      logger.error("Error in doctorAssignCase: ", error);
+      logger.error("Error in doctorAssignCase:", error);
       res.status(500).json({
         status: false,
         message:
@@ -237,7 +219,89 @@ export default class doctorController {
       });
     }
   }
+  public static async doctorAssigncaseList(req: Request, res: Response) {
+    try {
+      const { proposerName, productName, fromDate, toDate, search } =
+        req.body.validatedQueryData || {};
+      const { page = 1, perPage = 10 } = req.body.pagination || {};
+      const { sortBy = "createdAt", sortType = "desc" } =
+        req.body.validatedSortData || {};
+      const auth = req.body.auth;
+      console.log(auth, "auth------------------------>>>>>>>>");
+      const isAdmin =
+        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
+        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+          ? true
+          : false;
+      // Filter query
+      const filterQuery: any = {
+        doctorId: isAdmin ? undefined : req.body.auth.user,
+        status: CaseStatusEnum.RECALL,
+        deletedAt: null,
+      };
 
+      if (proposerName) {
+        filterQuery.proposerName = { $regex: new RegExp(proposerName, "i") };
+      }
+
+      if (productName) {
+        filterQuery.productName = { $regex: new RegExp(productName, "i") };
+      }
+
+      if (search && typeof search === "string" && search.trim() !== "") {
+        filterQuery.$or = [
+          { proposerName: { $regex: new RegExp(search, "i") } },
+          { proposalNo: { $regex: new RegExp(search, "i") } },
+          { productName: { $regex: new RegExp(search, "i") } },
+          { caseId: { $regex: new RegExp(search, "i") } },
+        ];
+      }
+
+      if (fromDate && toDate) {
+        filterQuery.createdAt = {
+          $gte: new Date(fromDate),
+          $lte: new Date(new Date(toDate).setUTCHours(23, 59, 59)),
+        };
+      }
+
+      // Sorting
+      const sort: any = {
+        [sortBy]: sortType === "asc" ? 1 : -1,
+      };
+
+      // Count total documents
+      const totalCount = await AssignMaster.countDocuments(filterQuery);
+
+      // Get paginated and sorted list
+      const doctorList = await AssignMaster.find(filterQuery)
+        .select(
+          "requestDate proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+        )
+        .populate({
+          path: "doctorId",
+          select: "firstName lastName email",
+        })
+        .populate({
+          path: "dispositionId",
+          select: "name description status",
+        })
+        .sort(sort)
+        .skip(perPage * (page - 1))
+        .limit(perPage);
+
+      res.status(200).json({
+        status: true,
+        data: doctorList,
+        pagination: pagination(totalCount, perPage, page),
+        message: req.t("crud.list", { model: "Doctor Open Case" }),
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: false,
+        message: (error as any).message,
+      });
+    }
+  }
   public static async doctorList(req: Request, res: Response) {
     try {
       const role = await Role.findOne({
