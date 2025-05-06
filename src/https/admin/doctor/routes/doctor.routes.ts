@@ -8,9 +8,11 @@ import {
 } from "../../../../middleware/RequestValidator";
 import doctorController from "../controllers/doctor.controller";
 import {
+  addRemarkRequest,
   assignParamIdRequest,
   DoctorAssignRequest,
   DoctorFilterRequest,
+  submitAssignedCasesRequest,
 } from "../requests/doctor.resquest";
 const router = Router();
 
@@ -40,6 +42,18 @@ router.put(
   RequestParamsValidator(assignParamIdRequest),
   RequestValidator(DoctorAssignRequest),
   doctorController.doctorAssignCase
+);
+router.put(
+  "/add-remark/:id",
+  RequestParamsValidator(assignParamIdRequest),
+  RequestValidator(addRemarkRequest),
+  doctorController.addRemark
+);
+router.put(
+  "/submit/:id",
+  RequestParamsValidator(assignParamIdRequest),
+  RequestValidator(submitAssignedCasesRequest),
+  doctorController.submitAssignedCases
 );
 router.get("/list", doctorController.doctorList);
 

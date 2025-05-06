@@ -17,3 +17,12 @@ export const DoctorAssignRequest = object().shape({
 export const assignParamIdRequest = object().shape({
   id: string().required(),
 });
+export const addRemarkRequest = object().shape({
+  remark: string().required(),
+});
+export const submitAssignedCasesRequest = object().shape({
+  alternateMobileNo: string().optional(),
+  language: string().optional(),
+  callbackDate: string().optional(),
+  dispositionId: string().optional(),
+});

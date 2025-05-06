@@ -1,5 +1,4 @@
-
-import { Schema } from "mongoose";
+import { Schema, Types } from "mongoose";
 import { CaseStatusEnum, statusEnum } from "../../../common/enums";
 
 export interface DoctorType extends Document {
@@ -20,7 +19,7 @@ export interface DoctorType extends Document {
   dcid?: string;
 }
 
-export interface IAssignMaster extends Document {
+export interface IAssignMasterAttrs {
   requestDate: Date;
   proposalNo: string;
   proposerName: string;
@@ -28,8 +27,8 @@ export interface IAssignMaster extends Document {
   mobileNo: string;
   email: string;
   status: CaseStatusEnum;
-  doctorId: Schema.Types.ObjectId;
-  openCaseId?: Schema.Types.ObjectId;
+  doctorId: Types.ObjectId;
+  openCaseId?: Types.ObjectId;
   alternateMobileNo?: string;
   language?: string;
   callbackDate?: Date;
@@ -38,11 +37,25 @@ export interface IAssignMaster extends Document {
   callViaPhone?: boolean;
   merLink?: string;
   unLinkCase?: string;
-  dispositionId?: Schema.Types.ObjectId;
-  createdBy?: string;
+  dispositionId?: Types.ObjectId;
+  createdBy?: Types.ObjectId;
   createdAt?: Date;
   requestAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;
+  history?: {
+    oldStatus: CaseStatusEnum;
+    newStatus: CaseStatusEnum;
+    changedAt: Date;
+    changedBy: Types.ObjectId;
+  }[];
 }
 
+// Final document type with instance methods
+export interface IAssignMasterDoc extends Document, IAssignMasterAttrs {
+  updateStatus: (
+    newStatus: CaseStatusEnum,
+    changedAt: Date,
+    changedBy: Types.ObjectId
+  ) => Promise<void>;
+}

@@ -7,6 +7,7 @@ import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 import { Admin } from "../../auth/model/admin.model";
 import { Role } from "../../role-and-permission/models/role";
 import { AssignMaster } from "../models/assignMaster.model";
+import { Disposition } from "../../../common/commanAPI/models/disposition.modal";
 
 export default class doctorController {
   public static async doctorOpencaseList(req: Request, res: Response) {
@@ -331,6 +332,135 @@ export default class doctorController {
         status: true,
         data: doctorList,
         message: req.t("crud.list", { model: "Doctor" }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: error.message,
+        });
+      } else {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  }
+  public static async addRemark(req: Request, res: Response) {
+    try {
+      const { id: casesId } = req.body.validatedParamsData;
+      const { remark } = req.body.validatedData;
+      // const userId = req.body.auth.user;
+
+      const caseData = await AssignMaster.findById(casesId).lean();
+      if (!caseData) {
+        res.status(404).json({
+          status: false,
+          message: "Case not found",
+        });
+      }
+
+      // Check if the case is already closed
+      if (caseData && caseData.status !== CaseStatusEnum.RECALL) {
+        res.status(400).json({
+          status: false,
+          message: "Cannot add remark to a closed case",
+        });
+      }
+      // Update the case with the new remark
+      await AssignMaster.findByIdAndUpdate(casesId, {
+        $push: { remark: remark },
+        $set: { updatedAt: new Date() },
+      });
+
+      res.status(200).json({
+        status: true,
+        message: req.t("crud.created", { model: "Add Remark" }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: error.message,
+        });
+      } else {
+        logger.error("Error in doctorAssignCase: ", error);
+        res.status(500).json({
+          status: false,
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  }
+  public static async submitAssignedCases(req: Request, res: Response) {
+    try {
+      const { id: casesId } = req.body.validatedParamsData;
+      let { alternateMobileNo, language, callbackDate, dispositionId } =
+        req.body.validatedData;
+      const userId = req.body.auth.user;
+
+     
+      console.log(callbackDate, "callbackDate  conversion");
+
+      const isAdmin =
+        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
+        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+          ? true
+          : false;
+
+      const caseData = await AssignMaster.findById(casesId).lean();
+
+      if (!caseData) {
+        res.status(404).json({
+          status: false,
+          message: "Case not found",
+        });
+      }
+
+      let dispositionData;
+      if (dispositionId) {
+        dispositionData = await Disposition.findById(dispositionId).lean();
+        if (!dispositionData) {
+          res.status(404).json({
+            status: false,
+            message: "Disposition not found",
+          });
+        }
+      }
+
+      // Check if the case is already closed
+      if (caseData && caseData.status !== CaseStatusEnum.RECALL) {
+        res.status(400).json({
+          status: false,
+          message: "Cannot add remark to a closed case",
+        });
+      }
+      // Update the case with the new remark
+      await AssignMaster.findByIdAndUpdate(casesId, {
+        $set: {
+          alternateMobileNo: isAdmin ? alternateMobileNo : null,
+          language,
+          callbackDate,
+          dispositionId,
+          updatedAt: new Date(),
+        },
+      });
+
+      if (caseData && dispositionData && dispositionData.toSubmit) {
+        await caseData.updateStatus(
+          CaseStatusEnum.SENT_TO_QC,
+          new Date(),
+          userId
+        );
+      }
+
+      res.status(200).json({
+        status: true,
+        message: req.t("crud.created", { model: "Cases" }),
       });
     } catch (error) {
       if (error instanceof Error) {
