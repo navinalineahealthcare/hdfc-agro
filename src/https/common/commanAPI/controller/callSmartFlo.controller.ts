@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { env } from "../../../../env";
-import { AssignMaster } from "../../../admin/doctor/models/assignMaster.model";
-import { statusEnumText } from "../../../../utils/utils";
-import { CaseStatusEnum, statusEnum } from "../../enums";
 import { axiosRequest } from "../../../../utils/axiosRequest";
+import { AssignMaster } from "../../../admin/doctor/models/assignMaster.model";
 import { CallResponse, ClickToCall } from "../models/callSmartFlo.modal";
 
 export class callarSmartFloController {
@@ -12,10 +10,9 @@ export class callarSmartFloController {
       const { id: casesId } = req.body.validatedParamsData;
       let { alternateMobileNo, MobileNo } = req.body.validatedData;
 
-      const caseExist = await AssignMaster.findOne({
-        where: { id: casesId, deletedAt: null },
-      }).lean();
+      const caseExist = await AssignMaster.findById(casesId).lean();
 
+      console.log(caseExist, "------------->>");
       if (!caseExist) {
         res.status(400).send({
           status: false,
@@ -33,10 +30,11 @@ export class callarSmartFloController {
 
       const data = {
         async: 1,
-        destination_number:
-          caseExist?.mobileNo ??
-          (caseExist?.alternateMobileNo || alternateMobileNo) ??
-          MobileNo,
+        destination_number: "7765041143",
+        // destination_number:
+        //   caseExist?.mobileNo ??
+        //   (caseExist?.alternateMobileNo || alternateMobileNo) ??
+        //   MobileNo,
         get_call_id: 1,
         agent_number: env.smartFlo.callingDefAgentNumber,
         caller_id: env.smartFlo.callingDefCallerId,
@@ -44,18 +42,23 @@ export class callarSmartFloController {
       const result = await axiosRequest({
         headers,
         data: JSON.stringify(data),
-        url: env.smartFlo.callingBaseUrl + "/v1/click_to_call",
+        url: env.smartFlo.callingBaseUrl + "v1/click_to_call",
         method: "post",
       });
+      console.log(
+        result,
+        "--------------clickToCall---------------------->>>>>>>>>>>"
+      );
 
-      if (!result?.response?.data || !result?.response?.data?.success) {
+      if (!result) {
         res.status(400).send({
           status: false,
           message: `Calling Failed${": " + (result?.errorData?.message ?? "")}`,
         });
       }
+
       const callRequest = await ClickToCall.create({
-        callId: result?.response?.data?.call_id,
+        callId: result?.call_id,
         casesId: casesId,
         caller_id_number: env.smartFlo.callingDefCallerId,
       });
@@ -65,9 +68,8 @@ export class callarSmartFloController {
         message: "Click to call initiated successfully",
         data: {
           callRequestId: callRequest._id,
-          callId: result?.response?.data?.call_id,
+          callId: result?.call_id,
           casesId: casesId,
-          caller_id_number: env.smartFlo.callingDefCallerId,
         },
       });
     } catch (error) {
@@ -93,15 +95,37 @@ export class callarSmartFloController {
           "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Mzc2NzQiLCJpc3MiOiJodHRwczovL2Nsb3VkcGhvbmUudGF0YXRlbGVzZXJ2aWNlcy5jb20vdG9rZW4vZ2VuZXJhdGUiLCJpYXQiOjE3MzE0OTc3MjAsImV4cCI6MjAzMTQ5NzcyMCwibmJmIjoxNzMxNDk3NzIwLCJqdGkiOiJTUGJ2Q3M1aTdHczdHQW5MIn0.vLXFZdtKVrMrKGxbgmeS6jPhtloEULcYMgiKB54S_No",
         "content-type": "application/json",
       };
-      const result = await axiosRequest({
-        headers,
-        data: JSON.stringify({ call_id: callId }),
-        url: env.smartFlo.callingBaseUrl + "/v1/call/hangup",
-        method: "post",
-      });
+      let result;
+
+      try {
+        result = await axiosRequest({
+          headers,
+          data: JSON.stringify({ call_id: callId }),
+          url: env.smartFlo.callingBaseUrl + "v1/call/hangup",
+          method: "post",
+        });
+        console.log(
+          result,
+          "-----------------hangUPCallRequest------------------->>>>>>>>>>>"
+        );
+      } catch (error) {
+        res.status(400).json({
+          status: false,
+          data: result,
+          message: "Agent is not responding to the call.",
+        });
+      }
+
+      if (!result) {
+        res.status(400).send({
+          status: false,
+          message: `Calling Failed${": " + (result?.errorData?.message ?? "")}`,
+        });
+      }
+
       res.status(200).json({
         status: true,
-        data: result?.response?.data,
+        data: result,
         message: "Call response fetched successfully",
       });
     } catch (error) {
@@ -224,7 +248,6 @@ export class callarSmartFloController {
   }
 
   // not used yet
-
   public static async callStatus(req: Request, res: Response): Promise<void> {
     try {
       const { callId } = req.body.validatedData;
@@ -235,15 +258,25 @@ export class callarSmartFloController {
           "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Mzc2NzQiLCJpc3MiOiJodHRwczovL2Nsb3VkcGhvbmUudGF0YXRlbGVzZXJ2aWNlcy5jb20vdG9rZW4vZ2VuZXJhdGUiLCJpYXQiOjE3MzE0OTc3MjAsImV4cCI6MjAzMTQ5NzcyMCwibmJmIjoxNzMxNDk3NzIwLCJqdGkiOiJTUGJ2Q3M1aTdHczdHQW5MIn0.vLXFZdtKVrMrKGxbgmeS6jPhtloEULcYMgiKB54S_No",
         "content-type": "application/json",
       };
-      const result = await axiosRequest({
-        headers,
-        data: JSON.stringify({ call_id: callId }),
-        url: env.smartFlo.callingBaseUrl + "/v1/call/status",
-        method: "post",
-      });
+      let result;
+      try {
+        result = await axiosRequest({
+          headers,
+          data: JSON.stringify({ call_id: callId }),
+          url: env.smartFlo.callingBaseUrl + "v1/call/status",
+          method: "post",
+        });
+      } catch (error) {
+        res.status(400).json({
+          status: false,
+          data: result,
+          message: "Agent is not responding to the call.",
+        });
+      }
+
       res.status(200).json({
         status: true,
-        data: result?.response?.data,
+        data: result,
         message: "Call status fetched successfully",
       });
     } catch (error) {
@@ -271,7 +304,7 @@ export class callarSmartFloController {
       const result = await axiosRequest({
         headers,
         data: JSON.stringify({ call_id: callId }),
-        url: env.smartFlo.callingBaseUrl + "/v1/call/recording",
+        url: env.smartFlo.callingBaseUrl + "v1/call/recording",
         method: "post",
       });
       res.status(200).json({

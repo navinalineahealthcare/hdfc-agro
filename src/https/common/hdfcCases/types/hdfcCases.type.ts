@@ -40,3 +40,23 @@ export interface HDFCCasesRequest extends UserDataType, Document {
   deletedAt: Date;
   status: statusEnum;
 }
+
+export interface CampaignRequest extends Document {
+  campaignId: number;
+  campaignName: string;
+
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
+  status: statusEnum;
+}
+export interface AgentCampaignRequest extends Document {
+  agentNumber: string;
+  callerId: string;
+  callerUserId: string;
+  campaignId: number;
+  status: statusEnum;
+  deletedAt?: Date | null;
+  updatedAt?: Date;
+  createdAt?: Date;
+}

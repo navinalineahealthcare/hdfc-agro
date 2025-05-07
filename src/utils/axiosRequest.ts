@@ -18,7 +18,6 @@ export const axiosRequest = async <T = any>(options: AxiosRequestParams): Promis
       data: options.data,
       params: options.params,
     });
-
     return response.data;
   } catch (error: any) {
     // Optional: customize error logging or throw structured error

@@ -9,11 +9,13 @@ import {
   assignParamIdRequest,
   hangupCallRequest,
 } from "../../../admin/doctor/requests/doctor.resquest";
+import { verifyToken } from "../../../../middleware/Auth";
 
 const router = Router();
 
 router.post(
   "/click-to-call/:id",
+  verifyToken,
   RequestValidator(ClickToCallRequest),
   RequestParamsValidator(assignParamIdRequest),
   callarSmartFloController.clickToCall
@@ -26,6 +28,7 @@ router.post(
 
 router.post(
   "/call-status",
+  verifyToken,
   RequestValidator(hangupCallRequest),
   callarSmartFloController.callStatus
 );

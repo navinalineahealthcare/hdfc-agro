@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { HDFCCasesRequest } from "../types/hdfcCases.type";
-import { CaseStatusEnum } from "../../enums";
+import { CampaignRequest, HDFCCasesRequest } from "../types/hdfcCases.type";
+import { CaseStatusEnum, statusEnum } from "../../enums";
 
 const HDFCCasesSchema = new mongoose.Schema(
   {
@@ -45,6 +45,7 @@ const HDFCCasesSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 const HDFCCases = mongoose.model<HDFCCasesRequest>(
   "HDFCCases",
