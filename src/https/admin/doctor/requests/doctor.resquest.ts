@@ -17,6 +17,9 @@ export const DoctorAssignRequest = object().shape({
 export const assignParamIdRequest = object().shape({
   id: string().required(),
 });
+export const hangupCallRequest = object().shape({
+  callId: string().required(),
+});
 export const addRemarkRequest = object().shape({
   remark: string().required(),
 });

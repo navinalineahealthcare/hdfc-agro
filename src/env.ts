@@ -24,7 +24,7 @@ export const env = {
     secret: getOsEnv("JWT_SECRET")!,
     expiresIn: getOsEnv("JWT_EXPIRES_IN"),
     forgotPasswordExpiredIn: getOsEnv("JWT_FORGOT_PASSWORD_EXPIRES_IN"),
-    deviceExpireIn: getOsEnv("DEVICE_EXPIRY_HRS")
+    deviceExpireIn: getOsEnv("DEVICE_EXPIRY_HRS"),
   },
   jwtsecret: getOsEnv("JWTSECRET"),
   cors: {
@@ -52,7 +52,11 @@ export const env = {
     region: getOsEnv("AWS_DEFAULT_REGION"),
     endpoint: getOsEnv("AWS_ENDPOINT"),
   },
-
+  smartFlo: {
+    callingDefCallerId: getOsEnv("CALLING_DEF_CALLER_ID"),
+    callingDefAgentNumber: getOsEnv("CALLING_DEF_AGENT_NUMBER"),
+    callingBaseUrl: getOsEnv("CALL_API_BASE_URL"),
+    callingAuthToken: getOsEnv("CALLING_AUTH_TOKEN"),
+  },
 };
 export { toNumber };
-
