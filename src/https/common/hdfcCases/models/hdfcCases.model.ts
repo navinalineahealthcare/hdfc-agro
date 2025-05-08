@@ -33,6 +33,12 @@ const HDFCCasesSchema = new mongoose.Schema(
     tpaName: { type: String, default: null },
     tpaRemark: { type: String, default: null },
     txtZone: { type: String, default: null },
+    weight: { type: String, default: null },// Added weight field
+    height: { type: String, default: null },// Added height field
+    bmi: { type: String, default: null },// Added bmi field
+    relationship: { type: String, default: null },// Added relationship field
+    educationQualification: { type: String, default: null },// Added educationQualification field
+    occupation: { type: String, default: null },// Added occupation field
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     status: {
@@ -45,7 +51,6 @@ const HDFCCasesSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 const HDFCCases = mongoose.model<HDFCCasesRequest>(
   "HDFCCases",
