@@ -38,6 +38,12 @@ export interface HDFCCasesRequest extends UserDataType, Document {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
+  weight: string | null;
+  height: string | null;
+  bmi: string | null;
+  relationship: string | null;
+  educationQualification: string | null;
+  occupation: string | null;
   status: statusEnum;
 }
 
