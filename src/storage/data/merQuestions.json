@@ -1,0 +1,1048 @@
+[
+  {
+    "id": 1,
+    "question": "High Blood Sugar / Diabetes",
+    "agree": "Yes",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "Are you suffering from type 1 or type 2 diabetes?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine and have you been advised to take insulin in the past or present?",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "remark": ""
+  },
+  {
+    "id": 2,
+    "question": "High blood pressure/High Cholesterol/High Triglycerides",
+    "agree": "Yes",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "Number of years since suffering from it",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "remark": ""
+  },
+  {
+    "id": 3,
+    "agree": "Yes",
+    "question": "Heart Problem or heart surgery like angioplasty, bypass, pacemaker, hole in heart or had any chest pain, breathlessness, fainting attacks or any other heart disease",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "remark": ""
+  },
+  {
+    "id": 4,
+    "question": "Thyroid disorder / Pituitary disorder or any other endocrine disease",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Kindly specify the exact condition (e.g., hypothyroid, hyperthyroid, goitre, etc.).",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 5,
+    "question": "Asthma, bronchitis, wheezing, tuberculosis, breathing difficulties or any other respiratory disorder",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "If inhaler then please ask the frequency of usage and no, of years since using",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 6,
+    "question": "Blood disorder like anemia, leukemia or any circulatory disorder",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Type of Anaemia,and latest hb value.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 7,
+    "question": "Stroke / Paralysis / Head injury",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 8,
+    "question": "Epilepsy / Fits / Mental disorder Epilepsy, nervous disorder, multiple sclerosis, tremors, numbness, paralysis or psychiatric disorder",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Exact diagnosis for psychiatric disorder.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 9,
+    "question": "Liver disorders like cirrhosis, hepatitis, jaundice, disorder of the stomach, colitis or indigestion, gall bladder diseases / Piles / Fissure / Fistula, Hernia-operated / planned surgery",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 10,
+    "question": "Any physical or mental disability or any congenital disease",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Exact nature of disability.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "Disability percentage:",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 11,
+    "question": "Any diseases related to kidney such as Kidney failure, Kidney or Ureteric stones",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 12,
+    "question": "Any form of cancer, tumour, cyst, or growth of any kind or enlarged lymph nodes anywhere in the body",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Malignant or non-malignant (Cancerous or non-cancerous)?",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 13,
+    "question": "Osteoarthritis / Rheumatoid Arthritis / any other Bone or Joint disorders / Knee disorder / Ligament tear / Fractures",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "Exact nature of arthritis need to be asked if it is (ex-osteo or ankylosing or rheumatoid,etc)",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any  reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 14,
+    "question": "Disorder of back, muscle, joints, bone, neck, deformity, amputation, arthritis or gout",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 15,
+    "question": "Prostate disorder, urinary retention / incontinence,increased frequency of urination, hydrocele or any male genital problems.",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "remark": ""
+  },
+  {
+    "id": 16,
+    "question": "Ear, Nose, Throat, Eye disorders / cataract, ear discharge, hearing loss, decrease in vision except prescribed glasses",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 17,
+    "question": "Immune system disorder",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication, please specify the name of the medicine.",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given—medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to the ailment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 18,
+    "question": "Have you underwent any prolong consultation or investigation or ever hospitalized and / or advised for any treatment / Surgery?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 19,
+    "question": "have you had or been advised to have or in the next 30 days will you have an X-ray/ CT Scan / MRI / ECG / TMT / blood test or any other investigatory or diagnostic tests or any type of surgery?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 20,
+    "question": "In the last 2 years have you consulted any physician or have taken over the counter drugs for any signs and symptoms",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 21,
+    "question": "Do you take any regular medicine?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 22,
+    "question": "Is there any medical / surgical history you want us to know and record?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 23,
+    "question": "Are you receiving any treatment / medication or have you in the past received any treatment or undergone surgery / hospitalization for any medical condition / disability?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 24,
+    "question": "Have you been off work due to illness or for a continuous period of more than 10 days during the last one year?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 25,
+    "question": "Any other disease that you or any other member has and you would like to disclose?",
+    "subQuestions": [
+      {
+        "text": "When it was diagnosed? (Duration)",
+        "answer": ""
+      },
+      {
+        "text": "How it was treated (As Inpatient or Outpatient)? - was there any hospitalization related to this aliment?",
+        "answer": ""
+      },
+      {
+        "text": "If on medication please specify name of the medicine",
+        "answer": ""
+      },
+      {
+        "text": "What was the treatment given- medical or surgical?",
+        "answer": ""
+      },
+      {
+        "text": "Is the treatment being continued?",
+        "answer": ""
+      },
+      {
+        "text": "When was the treatment completed and when was the last consultation for the medical condition?",
+        "answer": ""
+      },
+      {
+        "text": "Any related complication due to aliment? Was there any precautions advised by the doctor?",
+        "answer": ""
+      },
+      {
+        "text": "Is there any physical / mental disability due to that illness?",
+        "answer": ""
+      },
+      {
+        "text": "Any reoccurrence or persisting complaints",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 26,
+    "question": "Is there any medical / surgical history or any planned surgery in future which you want us to know and record?",
+    "subQuestions": [
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 27,
+    "question": "Any habit of Alcohol, smoking, tobacco chewing or any other",
+    "subQuestions": [
+      {
+        "text": "Quantity, Frequency and Duration (Alcohol: ml per week, and cigarette: numbers per day, tobacco: no of pouches or grams per day)",
+        "answer": "Nisi sapiente volupt"
+      }
+    ],
+    "agree": "Yes",
+    "remark": "Dolores quia sint o"
+  },
+  {
+    "id": 28,
+    "question": "Are you, or have you been tested positive for the novel coronavirus or await the result of such test?",
+    "subQuestions": [],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 29,
+    "question": "In close contact with anyone who has been quarantined or who has been diagnosed with novel coronavirus (SARS-CoV2/COVID-19)?",
+    "subQuestions": [],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 30,
+    "question": "Quarantined due to a possible exposure to novel coronavirus (SARS-CoV2/COVID-19)?",
+    "subQuestions": [],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 31,
+    "question": "Advised to be tested to rule in, or rule out, a diagnosis of novel coronavirus? [i. Yes, When was that & any complications after COVID recovery? ii. No, That’s good to know Sir/Ma’am.]",
+    "subQuestions": [],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 32,
+    "question": "Did you get vaccinated for COVID-19?",
+    "subQuestions": [
+      {
+        "text": "Yes - 1st Dose date(month) & 2nd Dose date (month)",
+        "answer": ""
+      },
+      {
+        "text": "Any Adverse reaction except fever, body aches",
+        "answer": ""
+      },
+      {
+        "text": "No - Have you scheduled?",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 33,
+    "question": "Is there any history of Breast disorders including lump / Fibroid uterus / Fibroadenoma / irregular period / cyst or any surgery?",
+    "subQuestions": [],
+    "isOnlyFemale": true,
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 34,
+    "question": "(For Women)Are you pregnant? If yes what is the expected date of delivery? Whether there is diabetes, hypertension or any other complication occurred during current or earlier pregnancy?",
+    "subQuestions": [],
+    "isOnlyFemale": true,
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 35,
+    "question": "(For Women) Have you undergone any of these tests like mammogram, ultrasound, pap smear etc.?",
+    "subQuestions": [],
+    "isOnlyFemale": true,
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 36,
+    "question": "Is this a portability case?",
+    "subQuestions": [
+      {
+        "text": "Ported from which company?",
+        "answer": ""
+      },
+      {
+        "text": "How many years with the earlier company?",
+        "answer": ""
+      },
+      {
+        "text": "Applied for how many years with HDFC ERGO?",
+        "answer": ""
+      },
+      {
+        "text": "No. of claims taken and when?",
+        "answer": ""
+      },
+      {
+        "text": "Reason",
+        "answer": ""
+      }
+    ],
+    "agree": "Yes",
+    "remark": ""
+  },
+  {
+    "id": 37,
+    "question": "Dr Final Remark if any?",
+    "subQuestions": [],
+    "agree": "Yes",
+    "remark": ""
+  }
+]

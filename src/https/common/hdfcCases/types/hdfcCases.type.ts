@@ -44,7 +44,6 @@ export interface HDFCCasesRequest extends UserDataType, Document {
 export interface CampaignRequest extends Document {
   campaignId: number;
   campaignName: string;
-
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
