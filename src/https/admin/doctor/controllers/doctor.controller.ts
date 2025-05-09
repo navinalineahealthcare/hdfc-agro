@@ -178,6 +178,7 @@ export default class doctorController {
       // Prepare documents for assignment
       const caseDocs = validCases.map((caseData) => ({
         requestDate: caseData.createdAt,
+        requestId: caseData.requestId,
         proposalNo: caseData.proposalNo,
         proposerName: caseData.proposerName,
         insuredName: caseData.insuredName,
@@ -276,7 +277,7 @@ export default class doctorController {
       // Get paginated and sorted list
       const doctorList = await AssignMaster.find(filterQuery)
         .select(
-          "requestDate proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+          "requestDate requestId proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
         )
         .populate({
           path: "doctorId",

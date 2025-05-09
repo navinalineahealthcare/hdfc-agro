@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import * as XLSX from "xlsx";
 import { getFileBufferFromS3, parseExcelDate } from "../../../../utils/utils";
 import HDFCCases from "../models/hdfcCases.model";
+import { env } from "../../../../env";
 
 export class hdfcDumpCasesController {
-
   public static async dumpHDFCCases(
     req: Request,
     res: Response
@@ -25,7 +25,16 @@ export class hdfcDumpCasesController {
         });
         return;
       }
-      const mappedData = jsonData.map((row: any) => ({
+      let requestId: number;
+      const lastRequest = await HDFCCases.findOne().sort({
+        requestId: -1,
+      });
+
+      if (lastRequest) requestId = parseInt(lastRequest.requestId) + 1;
+      else requestId = env.app.requestIdStartWith;
+
+      const mappedData = jsonData.map((row: any, index) => ({
+        requestId: requestId + index,
         uniqueIdNum: row["UNIQUE ID NUM"]?.toString() || null,
         fromDate: parseExcelDate(row["FROM DATE"]),
         toDate: parseExcelDate(row["TO DATE"]),
@@ -70,15 +79,14 @@ export class hdfcDumpCasesController {
           upsert: true,
         },
       }));
-      
+
       const bulkResult = await HDFCCases.bulkWrite(bulkOps, { ordered: false });
-      
+
       res.status(200).json({
         status: true,
         data: bulkResult,
         message: "dump HDFC Cases successfully",
       });
-      
     } catch (error) {
       console.error("Error importing Excel data:", error);
       res.status(500).send({
@@ -87,5 +95,4 @@ export class hdfcDumpCasesController {
       });
     }
   }
-
 }

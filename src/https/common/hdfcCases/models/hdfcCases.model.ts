@@ -5,6 +5,7 @@ import { CaseStatusEnum, statusEnum } from "../../enums";
 const HDFCCasesSchema = new mongoose.Schema(
   {
     uniqueIdNum: { type: String, default: null },
+    requestId: { type: String, required: true  ,default: null },
     fromDate: { type: String, default: null },
     toDate: { type: String, default: null },
     proposalNo: { type: String, default: null },

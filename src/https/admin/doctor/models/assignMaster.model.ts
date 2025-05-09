@@ -9,6 +9,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
   {
     requestDate: { type: Date, default: Date.now },
     proposalNo: { type: String, required: true },
+    requestId: { type: String, required: true },
     proposerName: { type: String, required: true },
     insuredName: { type: String, required: true },
     mobileNo: { type: String, required: true },

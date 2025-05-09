@@ -11,6 +11,7 @@ export const env = {
   isTest: process.env.APP_ENV === "test",
   isDevelopment: process.env.APP_ENV === "development",
   app: {
+    requestIdStartWith: toNumber(getOsEnv("REQUEST_ID_START_WITH")),
     database_url: getOsEnv("DATABASE_URL"),
     api_prefix: getOsEnv("API_PREFIX"),
     name: getOsEnv("APP_NAME"),

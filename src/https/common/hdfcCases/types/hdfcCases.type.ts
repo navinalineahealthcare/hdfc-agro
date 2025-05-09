@@ -35,6 +35,7 @@ export interface UserDataType {
 }
 
 export interface HDFCCasesRequest extends UserDataType, Document {
+  requestId: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

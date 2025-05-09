@@ -53,6 +53,7 @@ export interface IAssignMasterAttrs {
 
 // Final document type with instance methods
 export interface IAssignMasterDoc extends Document, IAssignMasterAttrs {
+  requestId: string;
   updateStatus: (
     newStatus: CaseStatusEnum,
     changedAt: Date,

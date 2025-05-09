@@ -145,7 +145,7 @@ export default class teleMerController {
       }
 
       console.log(data, "------", data.length, "------", data[0]._id);
-      
+
       const operations = data.map((item: any) =>
         Promise.all([
           TeleMer.create({
@@ -181,6 +181,7 @@ export default class teleMerController {
       );
 
       await Promise.all(operations);
+      
 
       res.status(200).json({
         status: true,
