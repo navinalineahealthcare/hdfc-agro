@@ -22,7 +22,8 @@ export default class teleMerController {
           select:
             "language address city state pincode age gender clientDob weight height bmi relationship educationQualification occupation",
           match: { deletedAt: null },
-        });
+        })
+        .lean();
 
       if (!teleMerdata) {
         res.status(404).json({
@@ -31,9 +32,35 @@ export default class teleMerController {
         });
       }
 
+      let proposerDob: string | null = null;
+
+      for (const doc of teleMerdata) {
+        console.log(
+          doc.insuredName?.trim().toLowerCase() ===
+            doc.proposerName?.trim().toLowerCase(),
+          "===========>>>>>>>>>>>>>>>>>>",
+          doc.insuredName,
+          doc.proposerName
+        );
+        if (
+          doc.insuredName?.trim().toLowerCase() ===
+          doc.proposerName?.trim().toLowerCase()
+        ) {
+          // @ts-ignore
+          proposerDob = doc?.openCaseId?.clientDob || null;
+          break;
+        }
+      }
+      console.log(proposerDob);
+      // Step 2: Add proposerDob to each object
+      const updatedData = teleMerdata.map((doc) => ({
+        ...doc,
+        proposerDob,
+      }));
+
       res.status(200).json({
         status: true,
-        data: teleMerdata,
+        data: updatedData,
         message: req.t("crud.list", { model: "Tele Mer" }),
       });
     } catch (error: any) {
@@ -43,82 +70,83 @@ export default class teleMerController {
       });
     }
   }
-  //   public static async teleMerCreated(req: Request, res: Response) {
-  //     try {
-  //       let { proposalNo, data } = req.body.validatedData;
 
-  //       const AssignMasterData = await AssignMaster.find({
-  //         proposalNo: proposalNo,
-  //         deletedAt: null,
-  //         status: CaseStatusEnum.RECALL,
-  //       });
+  // public static async teleMerCreated(req: Request, res: Response) {
+  //   try {
+  //     let { proposalNo, data } = req.body.validatedData;
 
-  //       if (!AssignMasterData || AssignMasterData.length === 0) {
-  //         res.status(404).json({
-  //           status: false,
-  //           message: req.t("crud.not_found", { model: "proposal data" }),
-  //         });
-  //       }
+  //     const AssignMasterData = await AssignMaster.find({
+  //       proposalNo: proposalNo,
+  //       deletedAt: null,
+  //       status: CaseStatusEnum.RECALL,
+  //     });
 
-  //       data.forEach(async (item: any) => {
-  //         await TeleMer.create({
-  //           proposalNo: proposalNo,
-  //           teleMerData: item.questions,
-  //           caseId: item._id,
-  //         });
-  //         await AssignMaster.findOneAndUpdate(
-  //           {
-  //             _id: item._id,
-  //           },
-  //           {
-  //             $set: {
-  //               alternateMobileNo: item.alternateMobileNo,
-  //               updatedAt: new Date(),
-  //             },
-  //           },
-  //           {
-  //             new: true,
-  //           }
-  //         );
-  //         await HDFCCases.findOneAndUpdate(
-  //           { proposalNo: proposalNo },
-  //           {
-  //             $set: {
-  //               weight: item.openCaseId.weight,
-  //               height: item.openCaseId.height,
-  //               bmi: item.openCaseId.bmi,
-  //               relationship: item.openCaseId.relationship,
-  //               occupation: item.openCaseId.occupation,
-  //               gender: item.openCaseId.gender.toString().charAt(0).toUpperCase(),
-  //               educationQualification: item.openCaseId.educationQualification,
-  //               updatedAt: new Date(),
-  //             },
-  //           },
-  //           {
-  //             new: true,
-  //           }
-  //         );
-  //       });
-
-  //       if (true) {
-  //         res.status(404).json({
-  //           status: false,
-  //           message: req.t("crud.not_found", { model: "proposal data" }),
-  //         });
-  //       }
-
-  //       res.status(200).json({
-  //         status: true,
-  //         data: "teleMerdata",
-  //         message: req.t("crud.list", { model: "Tele Mer" }),
-  //       });
-  //     } catch (error: any) {
-  //       res.status(500).json({
+  //     if (!AssignMasterData || AssignMasterData.length === 0) {
+  //       res.status(404).json({
   //         status: false,
-  //         message: error.message,
+  //         message: req.t("crud.not_found", { model: "proposal data" }),
   //       });
   //     }
+
+  //     data.forEach(async (item: any) => {
+  //       await TeleMer.create({
+  //         proposalNo: proposalNo,
+  //         teleMerData: item.questions,
+  //         caseId: item._id,
+  //       });
+  //       await AssignMaster.findOneAndUpdate(
+  //         {
+  //           _id: item._id,
+  //         },
+  //         {
+  //           $set: {
+  //             alternateMobileNo: item.alternateMobileNo,
+  //             updatedAt: new Date(),
+  //           },
+  //         },
+  //         {
+  //           new: true,
+  //         }
+  //       );
+  //       await HDFCCases.findOneAndUpdate(
+  //         { proposalNo: proposalNo },
+  //         {
+  //           $set: {
+  //             weight: item.openCaseId.weight,
+  //             height: item.openCaseId.height,
+  //             bmi: item.openCaseId.bmi,
+  //             relationship: item.openCaseId.relationship,
+  //             occupation: item.openCaseId.occupation,
+  //             gender: item.openCaseId.gender.toString().charAt(0).toUpperCase(),
+  //             educationQualification: item.openCaseId.educationQualification,
+  //             updatedAt: new Date(),
+  //           },
+  //         },
+  //         {
+  //           new: true,
+  //         }
+  //       );
+  //     });
+
+  //     if (true) {
+  //       res.status(404).json({
+  //         status: false,
+  //         message: req.t("crud.not_found", { model: "proposal data" }),
+  //       });
+  //     }
+
+  //     res.status(200).json({
+  //       status: true,
+  //       data: "teleMerdata",
+  //       message: req.t("crud.list", { model: "Tele Mer" }),
+  //     });
+  //   } catch (error: any) {
+  //     res.status(500).json({
+  //       status: false,
+  //       message: error.message,
+  //     });
   //   }
+  // }
 
   /**
    * @description Create TeleMer data
@@ -181,7 +209,6 @@ export default class teleMerController {
       );
 
       await Promise.all(operations);
-      
 
       res.status(200).json({
         status: true,
