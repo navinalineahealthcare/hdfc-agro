@@ -10,10 +10,16 @@ router.get(
   RequestParamsValidator(assignParamIdRequest),
   teleMerController.teleMerlist
 );
+router.put(
+  "/unlink/:id",
+  RequestParamsValidator(assignParamIdRequest),
+  teleMerController.teleMerUnlink
+);
 router.post(
   "/create",
   RequestValidator(medicalQuestionValidationRequest),
   teleMerController.teleMerCreated
 );
+
 
 export default router;

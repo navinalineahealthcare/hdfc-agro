@@ -28,6 +28,7 @@ export interface IAssignMasterAttrs {
   email: string;
   status: CaseStatusEnum;
   doctorId: Types.ObjectId;
+  qcDoctorId: Types.ObjectId;
   openCaseId?: Types.ObjectId;
   alternateMobileNo?: string;
   language?: string;
@@ -35,6 +36,7 @@ export interface IAssignMasterAttrs {
   play?: boolean;
   remark?: string[];
   callViaPhone?: boolean;
+  isTeleMer?: boolean;
   merLink?: string;
   unLinkCase?: string;
   dispositionId?: Types.ObjectId;

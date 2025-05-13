@@ -31,6 +31,13 @@
     "email_exists": "Entered Email ID is already registered"
   },
 
+  "mer":{
+    "invalid_case_id": "Invalid case ID.",
+    "case_not_found": "Case not found.",
+    "already_unlinked": "MER has already been unlinked.",
+    "unlink_mer_success": "MER unlinked successfully."
+  },
+
   "device": {
     "device_created": "Device created",
     "device_deleted": "Device deleted",

@@ -21,6 +21,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
       required: true,
     },
     doctorId: { type: Schema.Types.ObjectId, ref: "admins", default: null },
+    qcDoctorId: { type: Schema.Types.ObjectId, ref: "admins", default: null },
     openCaseId: {
       type: Schema.Types.ObjectId,
       ref: "HDFCCases",
@@ -31,6 +32,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     callbackDate: { type: String, default: null },
     remark: { type: [String], default: [] },
     callViaPhone: { type: Boolean, default: false },
+    isTeleMer: { type: Boolean, default: false },
     dispositionId: {
       type: Schema.Types.ObjectId,
       ref: "dispositions",

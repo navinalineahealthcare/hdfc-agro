@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { AssignMaster } from "../../doctor/models/assignMaster.model";
-import { CaseStatusEnum } from "../../../common/enums";
+import { CaseStatusEnum, statusEnum } from "../../../common/enums";
 import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
+import { AssignMaster } from "../../doctor/models/assignMaster.model";
 import { TeleMer } from "../models/teleMer.model";
-import mongoose from "mongoose";
 
 export default class teleMerController {
   public static async teleMerlist(req: Request, res: Response) {
@@ -68,6 +67,51 @@ export default class teleMerController {
         status: false,
         message: error.message,
       });
+    }
+  }
+
+  public static async teleMerUnlink(req: Request, res: Response) {
+    try {
+      const { id: openCaseId } = req.body.validatedParamsData;
+
+      if (!openCaseId) {
+        res.status(400).json({
+          status: false,
+          message: req.t("mer.invalid_case_id"),
+        });
+        return;
+      }
+
+      await AssignMaster.updateOne(
+        { openCaseId: openCaseId },
+        {
+          $set: {
+            deletedAt: new Date(),
+          },
+        }
+      );
+      await HDFCCases.updateOne(
+        {
+          _id: openCaseId,
+        },
+        {
+          $set: {
+            status: CaseStatusEnum.RECEIVED,
+          },
+        }
+      );
+
+      res.status(200).json({
+        status: true,
+        message: req.t("mer.unlink_mer_success"),
+      });
+      return;
+    } catch (error: any) {
+      res.status(500).json({
+        status: false,
+        message: req.t("common.internal_server_error") || error.message,
+      });
+      return;
     }
   }
 
@@ -158,12 +202,11 @@ export default class teleMerController {
   public static async teleMerCreated(req: Request, res: Response) {
     try {
       const { proposalNo, data } = req.body.validatedData;
-
       const assignMasterData = await AssignMaster.find({
         proposalNo,
         deletedAt: null,
         status: CaseStatusEnum.RECALL,
-      });
+      }).lean();
 
       if (!assignMasterData || assignMasterData.length === 0) {
         res.status(404).json({
@@ -186,6 +229,7 @@ export default class teleMerController {
             {
               $set: {
                 alternateMobileNo: item.alternateMobileNo,
+                isTeleMer: true,
                 updatedAt: new Date(),
               },
             }
