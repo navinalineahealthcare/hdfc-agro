@@ -238,8 +238,12 @@ export default class teleMerController {
               },
             }
           ),
+
           HDFCCases.findOneAndUpdate(
-            { proposalNo },
+            {
+              _id: item.openCaseId._id,
+              proposalNo,
+            },
             {
               $set: {
                 weight: item.openCaseId.weight,
