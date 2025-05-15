@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CaseStatusEnum, statusEnum } from "../../../common/enums";
+import { CaseStatusEnum, rolesEnum, statusEnum } from "../../../common/enums";
 import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 import { AssignMaster } from "../../doctor/models/assignMaster.model";
 import { TeleMer } from "../models/teleMer.model";
@@ -73,6 +73,12 @@ export default class teleMerController {
   public static async teleMerUnlink(req: Request, res: Response) {
     try {
       const { id: openCaseId } = req.body.validatedParamsData;
+      const { type } = req?.body;
+
+      const setQuery = {
+        deletedAt: new Date(),
+        ...(type === rolesEnum.QC ? { qcDoctorId: null } : { doctorId: null }),
+      };
 
       if (!openCaseId) {
         res.status(400).json({
@@ -85,9 +91,7 @@ export default class teleMerController {
       await AssignMaster.updateOne(
         { openCaseId: openCaseId },
         {
-          $set: {
-            deletedAt: new Date(),
-          },
+          $set: setQuery,
         }
       );
       await HDFCCases.updateOne(

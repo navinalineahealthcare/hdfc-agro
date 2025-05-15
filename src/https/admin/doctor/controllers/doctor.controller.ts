@@ -232,13 +232,13 @@ export default class doctorController {
       const auth = req.body.auth;
       console.log(auth, "auth------------------------>>>>>>>>");
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
       // Filter query
       const filterQuery: any = {
-        doctorId: isAdmin ? undefined : req.body.auth.user,
+        ...(isAdmin ? {} : { doctorId: req.body.auth.user }),
         status: CaseStatusEnum.RECALL,
         deletedAt: null,
       };
@@ -413,7 +413,7 @@ export default class doctorController {
           ? true
           : false;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({

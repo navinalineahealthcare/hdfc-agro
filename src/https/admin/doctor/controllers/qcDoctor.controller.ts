@@ -19,10 +19,18 @@ export default class qcDoctorController {
       const { sortBy = "createdAt", sortType = "desc" } =
         req.body.validatedSortData || {};
 
+      const isAdmin =
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
+          ? true
+          : false;
+
       // Filter query
       const filterQuery: any = {
+        ...(isAdmin ? {} : { qcDoctorId: req.body.auth.user }),
         status: CaseStatusEnum.SENT_TO_QC,
         deletedAt: null,
+        qcDoctorId: null,
       };
 
       if (proposerName) {
@@ -55,13 +63,17 @@ export default class qcDoctorController {
       };
 
       // Count total documents
-      const totalCount = await HDFCCases.countDocuments(filterQuery);
+      const totalCount = await AssignMaster.countDocuments(filterQuery);
 
       // Get paginated and sorted list
-      const qcDoctorList = await HDFCCases.find(filterQuery)
+      const qcDoctorList = await AssignMaster.find(filterQuery)
         .select(
-          "proposerName createdAt customerEmailId agentName contactNo status proposalNo"
+          "proposerName createdAt email insuredName mobileNo status proposalNo"
         )
+        .populate({
+          path: "doctorId",
+          select: "firstName email",
+        })
         .sort(sort)
         .skip(perPage * (page - 1))
         .limit(perPage);
@@ -150,14 +162,15 @@ export default class qcDoctorController {
       const auth = req.body.auth;
       console.log(auth, "auth------------------------>>>>>>>>");
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
       // Filter query
       const filterQuery: any = {
-        qcDoctorId: isAdmin ? undefined : req.body.auth.user,
+        ...(isAdmin ? {} : { qcDoctorId: req.body.auth.user }),
         status: CaseStatusEnum.SENT_TO_QC,
+        qcDoctorId: { $ne: null },
         deletedAt: null,
       };
 
@@ -419,5 +432,4 @@ export default class qcDoctorController {
       }
     }
   }
-
 }
