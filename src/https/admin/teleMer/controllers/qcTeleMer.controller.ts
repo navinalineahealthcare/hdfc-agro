@@ -95,4 +95,81 @@ export default class qcTeleMerController {
       });
     }
   }
+
+  public static async qcTeleMerConfirm(req: Request, res: Response) {
+    try {
+      const { proposalNo, data } = req.body.validatedData;
+      const assignMasterData = await AssignMaster.find({
+        proposalNo,
+        deletedAt: null,
+        status: CaseStatusEnum.SENT_TO_QC,
+      }).lean();
+
+      if (!assignMasterData || assignMasterData.length === 0) {
+        res.status(404).json({
+          status: false,
+          message: req.t("crud.not_found", { model: "proposal data" }),
+        });
+      }
+
+      const operations = data.map((item: any) =>
+        Promise.all([
+          TeleMer.findOneAndUpdate(
+            {
+              caseId: item._id,
+              proposalNo,
+            },
+            {
+              $set: {
+                qcTeleMer: true,
+                qcTeleMerData: item.questions,
+              },
+            }
+          ),
+          AssignMaster.findOneAndUpdate(
+            { _id: item._id },
+            {
+              $set: {
+                alternateMobileNo: item.alternateMobileNo,
+                qcTeleMer: true,
+                updatedAt: new Date(),
+              },
+            }
+          ),
+
+          HDFCCases.findOneAndUpdate(
+            {
+              _id: item.openCaseId._id,
+              proposalNo,
+            },
+            {
+              $set: {
+                weight: item.openCaseId.weight,
+                height: item.openCaseId.height,
+                bmi: item.openCaseId.bmi,
+                relationship: item.openCaseId.relationship,
+                occupation: item.openCaseId.occupation,
+                gender: item.openCaseId.gender?.charAt(0).toUpperCase(),
+                educationQualification: item.openCaseId.educationQualification,
+                updatedAt: new Date(),
+              },
+            }
+          ),
+        ])
+      );
+
+      await Promise.all(operations);
+
+      res.status(200).json({
+        status: true,
+        data: "Tele MER data saved",
+        message: req.t("crud.list", { model: "Tele Mer" }),
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: false,
+        message: error.message || "Internal server error",
+      });
+    }
+  }
 }

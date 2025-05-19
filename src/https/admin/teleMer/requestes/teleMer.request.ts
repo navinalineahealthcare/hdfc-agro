@@ -13,6 +13,7 @@ const medicalQuestionSchema = object({
   agree: string().oneOf(["Yes", "No"]).required(),
   question: string().required(),
   remark: string().optional(),
+  id: string().optional(),
   isOnlyFemale: boolean().required(),
   subQuestions: array().of(subQuestionSchema),
   // .required()

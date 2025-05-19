@@ -20,4 +20,10 @@ router.get(
   qcTeleMerController.qcTeleMerList
 );
 
+router.post(
+  "/confirm",
+  RequestValidator(medicalQuestionValidationRequest),
+  qcTeleMerController.qcTeleMerConfirm
+);
+
 export default router;

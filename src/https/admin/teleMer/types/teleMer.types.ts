@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
 export enum EnumTeleMer {
-  RECEIVED = 'Received',
-  RECALL = 'Recall',
-  SENT_TO_QC = 'Sent to QC',
+  RECEIVED = "Received",
+  RECALL = "Recall",
+  SENT_TO_QC = "Sent to QC",
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
 }
@@ -14,6 +14,9 @@ export interface ITeleMer extends Document {
   proposalNo: string;
   userId: Types.ObjectId;
   teleMerData?: Record<string, any> | null;
+  qcTeleMerData?: Record<string, any> | null;
+  isTeleMer?: Boolean;
+  qcTeleMer?: Boolean;
   status: EnumTeleMer;
   createdAt: Date;
   updatedAt: Date;
