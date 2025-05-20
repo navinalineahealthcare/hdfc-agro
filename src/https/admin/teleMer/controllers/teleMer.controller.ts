@@ -76,7 +76,6 @@ export default class teleMerController {
       const { type } = req?.body;
 
       const setQuery = {
-        deletedAt: new Date(),
         ...(type === rolesEnum.QC ? { qcDoctorId: null } : { doctorId: null }),
       };
 
@@ -94,16 +93,17 @@ export default class teleMerController {
           $set: setQuery,
         }
       );
-      await HDFCCases.updateOne(
-        {
-          _id: openCaseId,
-        },
-        {
-          $set: {
-            status: CaseStatusEnum.RECEIVED,
+      type !== rolesEnum.QC &&
+        (await HDFCCases.updateOne(
+          {
+            _id: openCaseId,
           },
-        }
-      );
+          {
+            $set: {
+              status: CaseStatusEnum.RECEIVED,
+            },
+          }
+        ));
 
       res.status(200).json({
         status: true,

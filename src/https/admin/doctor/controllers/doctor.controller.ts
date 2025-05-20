@@ -278,7 +278,7 @@ export default class doctorController {
       // Get paginated and sorted list
       const doctorList = await AssignMaster.find(filterQuery)
         .select(
-          "requestDate requestId proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+          "requestDate requestId proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId openCaseId"
         )
         .populate({
           path: "doctorId",

@@ -209,7 +209,7 @@ export default class qcDoctorController {
       // Get paginated and sorted list
       const qcDoctorList = await AssignMaster.find(filterQuery)
         .select(
-          "requestDate requestId proposalNo proposerName insuredName mobileNo status email qcDoctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+          "requestDate requestId proposalNo proposerName insuredName mobileNo status email qcDoctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId openCaseId"
         )
         .populate({
           path: "qcDoctorId",
