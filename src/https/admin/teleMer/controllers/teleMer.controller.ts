@@ -76,7 +76,9 @@ export default class teleMerController {
       const { type } = req?.body;
 
       const setQuery = {
-        ...(type === rolesEnum.QC ? { qcDoctorId: null } : { doctorId: null }),
+        ...(type === rolesEnum.QC
+          ? { qcDoctorId: null }
+          : { doctorId: null, status: CaseStatusEnum.RECEIVED }),
       };
 
       if (!openCaseId) {
