@@ -408,8 +408,8 @@ export default class doctorController {
       console.log(callbackDate, "callbackDate  conversion");
 
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req.body.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
 
