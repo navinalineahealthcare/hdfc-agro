@@ -30,15 +30,50 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     alternateMobileNo: { type: String, default: null },
     language: { type: String, default: null },
     callbackDate: { type: String, default: null },
-    remark: { type: [String], default: [] },
+    // remark: { type: [String], default: [] },
+    remark: [
+      {
+        text: {
+          type: String,
+          required: true,
+        },
+        changedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        changedBy: {
+          type: Schema.Types.ObjectId,
+          ref: "admins",
+          required: true,
+        },
+      },
+    ],
     callViaPhone: { type: Boolean, default: false },
     isTeleMer: { type: Boolean, default: false },
     qcTeleMer: { type: Boolean, default: false },
-    dispositionId: {
-      type: Schema.Types.ObjectId,
-      ref: "dispositions",
-      default: null,
-    },
+    // dispositionId: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "dispositions",
+    //   default: null,
+    // },
+    dispositionId: [
+      {
+        id: {
+          type: Schema.Types.ObjectId,
+          ref: "dispositions",
+          default: null,
+        },
+        changedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        changedBy: {
+          type: Schema.Types.ObjectId,
+          ref: "admins",
+          required: true,
+        },
+      },
+    ],
     createdBy: { type: Schema.Types.ObjectId, ref: "admins", default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

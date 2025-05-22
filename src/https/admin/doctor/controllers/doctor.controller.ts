@@ -355,7 +355,7 @@ export default class doctorController {
     try {
       const { id: casesId } = req.body.validatedParamsData;
       const { remark } = req.body.validatedData;
-      // const userId = req.body.auth.user;
+      const userId = req.body.auth.user;
 
       const caseData = await AssignMaster.findById(casesId).lean();
       if (!caseData) {
@@ -374,7 +374,13 @@ export default class doctorController {
       }
       // Update the case with the new remark
       await AssignMaster.findByIdAndUpdate(casesId, {
-        $push: { remark: remark },
+        $push: {
+          remark: {
+            text: remark,
+            changedAt: new Date(),
+            changedBy: userId,
+          },
+        },
         $set: { updatedAt: new Date() },
       });
 
@@ -468,10 +474,26 @@ export default class doctorController {
           alternateMobileNo: isAdmin ? alternateMobileNo : null,
           language,
           callbackDate,
-          dispositionId,
           updatedAt: new Date(),
         },
+        $push: {
+          dispositionId: {
+            id: dispositionId,
+            changedAt: new Date(),
+            changedBy: userId,
+          },
+        },
       });
+
+      // await AssignMaster.findByIdAndUpdate(casesId, {
+      //   $set: {
+      //     alternateMobileNo: isAdmin ? alternateMobileNo : null,
+      //     language,
+      //     callbackDate,
+      //     dispositionId,
+      //     updatedAt: new Date(),
+      //   },
+      // });
 
       if (caseData && dispositionData && dispositionData.toSubmit) {
         await caseData.updateStatus(

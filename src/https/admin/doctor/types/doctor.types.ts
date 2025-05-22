@@ -34,13 +34,23 @@ export interface IAssignMasterAttrs {
   language?: string;
   callbackDate?: Date;
   play?: boolean;
-  remark?: string[];
+  remark?: {
+    text: string;
+    changedAt: Date;
+    changedBy: Types.ObjectId;
+  }[];
   callViaPhone?: boolean;
   isTeleMer?: boolean;
   qcTeleMer?: boolean;
   merLink?: string;
   unLinkCase?: string;
-  dispositionId?: Types.ObjectId;
+  // dispositionId?: Types.ObjectId;
+  dispositionId?: {
+    id: Types.ObjectId | null;
+    changedAt: Date;
+    changedBy: Types.ObjectId;
+  }[];
+  
   createdBy?: Types.ObjectId;
   createdAt?: Date;
   requestAt?: Date;

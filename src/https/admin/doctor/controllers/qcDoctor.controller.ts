@@ -91,7 +91,6 @@ export default class qcDoctorController {
       });
     }
   }
-
   public static async qcDoctorAssignCase(req: Request, res: Response) {
     try {
       const { id: assignedToId } = req.body.validatedParamsData;
@@ -280,7 +279,6 @@ export default class qcDoctorController {
       }
     }
   }
-
   public static async approvedQCCases(req: Request, res: Response) {
     try {
       const { id: casesId } = req.body.validatedParamsData;
@@ -391,13 +389,29 @@ export default class qcDoctorController {
       }
 
       // Update the case with the new remark
+      // await AssignMaster.findByIdAndUpdate(casesId, {
+      //   $set: {
+      //     status: CaseStatusEnum.QC_REJECTED,
+      //     updatedAt: new Date(),
+      //     deletedAt: new Date(),
+      //   },
+      // });
+
       await AssignMaster.findByIdAndUpdate(casesId, {
         $set: {
           status: CaseStatusEnum.QC_REJECTED,
           updatedAt: new Date(),
           deletedAt: new Date(),
         },
+        $push: {
+          dispositionId: {
+            id: dispositionId, // Provide the new ObjectId
+            changedAt: new Date(),
+            changedBy: userId, // Current admin making the update
+          },
+        },
       });
+
       if (caseData) {
         await caseData.updateStatus(
           CaseStatusEnum.QC_REJECTED,
