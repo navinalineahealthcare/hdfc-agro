@@ -7,12 +7,14 @@ import roleHasPermissionRoutes from "./role-and-permission/routers/role-has-perm
 
 import { verifyToken } from "../../middleware/Auth";
 import { verifypermission } from "../../middleware/PermissionValidation";
+import qcTeleMerRoutes from "./teleMer/routes/qcTeleMer.routes";
 const router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/doctor", verifyToken, doctorRoutes);
 router.use("/qc", verifyToken, qcDoctorRoutes);
 router.use("/tele-mer", teleMerRoutes);
+router.use("/tele-mer-qc", qcTeleMerRoutes);
 
 router.use(
   "/role-permission",

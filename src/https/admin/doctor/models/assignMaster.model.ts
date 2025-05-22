@@ -33,6 +33,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     remark: { type: [String], default: [] },
     callViaPhone: { type: Boolean, default: false },
     isTeleMer: { type: Boolean, default: false },
+    qcTeleMer: { type: Boolean, default: false },
     dispositionId: {
       type: Schema.Types.ObjectId,
       ref: "dispositions",

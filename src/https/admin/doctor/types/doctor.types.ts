@@ -37,6 +37,7 @@ export interface IAssignMasterAttrs {
   remark?: string[];
   callViaPhone?: boolean;
   isTeleMer?: boolean;
+  qcTeleMer?: boolean;
   merLink?: string;
   unLinkCase?: string;
   dispositionId?: Types.ObjectId;

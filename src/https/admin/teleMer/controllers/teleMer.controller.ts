@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CaseStatusEnum, statusEnum } from "../../../common/enums";
+import { CaseStatusEnum, rolesEnum, statusEnum } from "../../../common/enums";
 import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 import { AssignMaster } from "../../doctor/models/assignMaster.model";
 import { TeleMer } from "../models/teleMer.model";
@@ -73,6 +73,13 @@ export default class teleMerController {
   public static async teleMerUnlink(req: Request, res: Response) {
     try {
       const { id: openCaseId } = req.body.validatedParamsData;
+      const { type } = req?.body;
+
+      const setQuery = {
+        ...(type === rolesEnum.QC
+          ? { qcDoctorId: null }
+          : { doctorId: null, status: CaseStatusEnum.RECEIVED }),
+      };
 
       if (!openCaseId) {
         res.status(400).json({
@@ -85,21 +92,20 @@ export default class teleMerController {
       await AssignMaster.updateOne(
         { openCaseId: openCaseId },
         {
-          $set: {
-            deletedAt: new Date(),
-          },
+          $set: setQuery,
         }
       );
-      await HDFCCases.updateOne(
-        {
-          _id: openCaseId,
-        },
-        {
-          $set: {
-            status: CaseStatusEnum.RECEIVED,
+      type !== rolesEnum.QC &&
+        (await HDFCCases.updateOne(
+          {
+            _id: openCaseId,
           },
-        }
-      );
+          {
+            $set: {
+              status: CaseStatusEnum.RECEIVED,
+            },
+          }
+        ));
 
       res.status(200).json({
         status: true,
@@ -234,8 +240,12 @@ export default class teleMerController {
               },
             }
           ),
+
           HDFCCases.findOneAndUpdate(
-            { proposalNo },
+            {
+              _id: item.openCaseId._id,
+              proposalNo,
+            },
             {
               $set: {
                 weight: item.openCaseId.weight,
