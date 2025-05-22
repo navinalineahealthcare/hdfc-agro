@@ -21,7 +21,7 @@ export default class doctorController {
 
       // Filter query
       const filterQuery: any = {
-        status: CaseStatusEnum.RECEIVED,
+        status: { $in: [CaseStatusEnum.RECEIVED, CaseStatusEnum.QC_REJECTED] },
         deletedAt: null,
       };
 
@@ -60,7 +60,7 @@ export default class doctorController {
       // Get paginated and sorted list
       const doctorList = await HDFCCases.find(filterQuery)
         .select(
-          "proposerName createdAt customerEmailId agentName contactNo status proposalNo"
+          "proposerName createdAt customerEmailId agentName contactNo status proposalNo insuredName"
         )
         .sort(sort)
         .skip(perPage * (page - 1))

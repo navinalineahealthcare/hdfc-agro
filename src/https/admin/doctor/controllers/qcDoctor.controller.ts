@@ -287,7 +287,7 @@ export default class qcDoctorController {
       let { dispositionId } = req.body.validatedData;
       const userId = req.body.auth.user;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({
@@ -310,7 +310,11 @@ export default class qcDoctorController {
       }
 
       // Check if the case is already closed
-      if (caseData && caseData.status !== CaseStatusEnum.CLOSED) {
+      if (
+        caseData &&
+        (caseData.status === CaseStatusEnum.CLOSED ||
+          caseData.status === CaseStatusEnum.QC_REJECTED)
+      ) {
         res.status(400).json({
           status: false,
           message: "Cannot add remark to a closed case",
@@ -355,7 +359,7 @@ export default class qcDoctorController {
       let { dispositionId } = req.body.validatedData;
       const userId = req.body.auth.user;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({
@@ -378,7 +382,7 @@ export default class qcDoctorController {
       }
 
       // Check if the case is already closed
-      if (caseData && caseData.status !== CaseStatusEnum.CANCELLED) {
+      if (caseData && caseData.status === CaseStatusEnum.QC_REJECTED) {
         res.status(400).json({
           status: false,
           message: "Cannot add remark to a closed case",
@@ -389,14 +393,14 @@ export default class qcDoctorController {
       // Update the case with the new remark
       await AssignMaster.findByIdAndUpdate(casesId, {
         $set: {
-          status: CaseStatusEnum.CANCELLED,
+          status: CaseStatusEnum.QC_REJECTED,
           updatedAt: new Date(),
           deletedAt: new Date(),
         },
       });
       if (caseData) {
         await caseData.updateStatus(
-          CaseStatusEnum.CANCELLED,
+          CaseStatusEnum.QC_REJECTED,
           new Date(),
           userId
         );
@@ -407,7 +411,7 @@ export default class qcDoctorController {
         },
         {
           $set: {
-            status: CaseStatusEnum.RECEIVED,
+            status: CaseStatusEnum.QC_REJECTED,
           },
         }
       );
