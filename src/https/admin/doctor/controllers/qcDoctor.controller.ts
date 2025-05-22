@@ -19,10 +19,18 @@ export default class qcDoctorController {
       const { sortBy = "createdAt", sortType = "desc" } =
         req.body.validatedSortData || {};
 
+      const isAdmin =
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
+          ? true
+          : false;
+
       // Filter query
       const filterQuery: any = {
+        ...(isAdmin ? {} : { qcDoctorId: req.body.auth.user }),
         status: CaseStatusEnum.SENT_TO_QC,
         deletedAt: null,
+        qcDoctorId: null,
       };
 
       if (proposerName) {
@@ -55,13 +63,17 @@ export default class qcDoctorController {
       };
 
       // Count total documents
-      const totalCount = await HDFCCases.countDocuments(filterQuery);
+      const totalCount = await AssignMaster.countDocuments(filterQuery);
 
       // Get paginated and sorted list
-      const qcDoctorList = await HDFCCases.find(filterQuery)
+      const qcDoctorList = await AssignMaster.find(filterQuery)
         .select(
-          "proposerName createdAt customerEmailId agentName contactNo status proposalNo"
+          "proposerName createdAt email insuredName mobileNo status proposalNo"
         )
+        .populate({
+          path: "doctorId",
+          select: "firstName email",
+        })
         .sort(sort)
         .skip(perPage * (page - 1))
         .limit(perPage);
@@ -150,14 +162,15 @@ export default class qcDoctorController {
       const auth = req.body.auth;
       console.log(auth, "auth------------------------>>>>>>>>");
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
       // Filter query
       const filterQuery: any = {
-        qcDoctorId: isAdmin ? undefined : req.body.auth.user,
+        ...(isAdmin ? {} : { qcDoctorId: req.body.auth.user }),
         status: CaseStatusEnum.SENT_TO_QC,
+        qcDoctorId: { $ne: null },
         deletedAt: null,
       };
 
@@ -196,7 +209,7 @@ export default class qcDoctorController {
       // Get paginated and sorted list
       const qcDoctorList = await AssignMaster.find(filterQuery)
         .select(
-          "requestDate requestId proposalNo proposerName insuredName mobileNo status email qcDoctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+          "requestDate requestId proposalNo proposerName insuredName mobileNo status email qcDoctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId openCaseId"
         )
         .populate({
           path: "qcDoctorId",
@@ -274,7 +287,7 @@ export default class qcDoctorController {
       let { dispositionId } = req.body.validatedData;
       const userId = req.body.auth.user;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({
@@ -297,7 +310,11 @@ export default class qcDoctorController {
       }
 
       // Check if the case is already closed
-      if (caseData && caseData.status !== CaseStatusEnum.CLOSED) {
+      if (
+        caseData &&
+        (caseData.status === CaseStatusEnum.CLOSED ||
+          caseData.status === CaseStatusEnum.QC_REJECTED)
+      ) {
         res.status(400).json({
           status: false,
           message: "Cannot add remark to a closed case",
@@ -342,7 +359,7 @@ export default class qcDoctorController {
       let { dispositionId } = req.body.validatedData;
       const userId = req.body.auth.user;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({
@@ -365,7 +382,7 @@ export default class qcDoctorController {
       }
 
       // Check if the case is already closed
-      if (caseData && caseData.status !== CaseStatusEnum.CANCELLED) {
+      if (caseData && caseData.status === CaseStatusEnum.QC_REJECTED) {
         res.status(400).json({
           status: false,
           message: "Cannot add remark to a closed case",
@@ -376,14 +393,14 @@ export default class qcDoctorController {
       // Update the case with the new remark
       await AssignMaster.findByIdAndUpdate(casesId, {
         $set: {
-          status: CaseStatusEnum.CANCELLED,
+          status: CaseStatusEnum.QC_REJECTED,
           updatedAt: new Date(),
           deletedAt: new Date(),
         },
       });
       if (caseData) {
         await caseData.updateStatus(
-          CaseStatusEnum.CANCELLED,
+          CaseStatusEnum.QC_REJECTED,
           new Date(),
           userId
         );
@@ -394,7 +411,7 @@ export default class qcDoctorController {
         },
         {
           $set: {
-            status: CaseStatusEnum.RECEIVED,
+            status: CaseStatusEnum.QC_REJECTED,
           },
         }
       );
@@ -419,5 +436,4 @@ export default class qcDoctorController {
       }
     }
   }
-
 }

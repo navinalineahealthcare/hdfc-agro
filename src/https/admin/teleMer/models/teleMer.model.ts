@@ -20,6 +20,12 @@ const teleMerSchema = new Schema<ITeleMer>(
       type: Schema.Types.Mixed, // Use Mixed for flexible JSON-like structure
       default: null,
     },
+    qcTeleMerData: {
+      type: Schema.Types.Mixed, // Use Mixed for flexible JSON-like structure
+      default: null,
+    },
+    isTeleMer: { type: Boolean, default: false },
+    qcTeleMer: { type: Boolean, default: false },
     status: {
       type: String,
       enum: Object.values(EnumTeleMer) as EnumTeleMer[],

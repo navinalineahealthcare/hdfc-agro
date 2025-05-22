@@ -2,9 +2,9 @@ import { object, string, array, boolean } from "yup";
 
 // Sub-question schema
 const subQuestionSchema = object({
-  _id: string().required(),
-  text: string().required(),
-  answer: string().optional(),
+  _id: string().optional(),
+  text: string().optional(),
+  answer: string().nullable(),
 });
 
 // Medical question schema with conditional validation
@@ -13,21 +13,21 @@ const medicalQuestionSchema = object({
   agree: string().oneOf(["Yes", "No"]).required(),
   question: string().required(),
   remark: string().optional(),
+  id: string().optional(),
   isOnlyFemale: boolean().required(),
-  subQuestions: array()
-    .of(subQuestionSchema)
-    // .required()
-    // .test(
-    //   "answers-required-if-agree-yes",
-    //   "All subQuestion answers are required when agree is Yes",
-    //   function (subQuestions) {
-    //     const { agree } = this.parent;
-    //     if (agree === "Yes") {
-    //       return subQuestions.every((sq: any) => sq.answer?.trim());
-    //     }
-    //     return true;
-    //   }
-    // ),
+  subQuestions: array().of(subQuestionSchema),
+  // .required()
+  // .test(
+  //   "answers-required-if-agree-yes",
+  //   "All subQuestion answers are required when agree is Yes",
+  //   function (subQuestions) {
+  //     const { agree } = this.parent;
+  //     if (agree === "Yes") {
+  //       return subQuestions.every((sq: any) => sq.answer?.trim());
+  //     }
+  //     return true;
+  //   }
+  // ),
 });
 
 // Open case schema

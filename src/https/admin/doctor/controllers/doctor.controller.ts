@@ -21,7 +21,7 @@ export default class doctorController {
 
       // Filter query
       const filterQuery: any = {
-        status: CaseStatusEnum.RECEIVED,
+        status: { $in: [CaseStatusEnum.RECEIVED, CaseStatusEnum.QC_REJECTED] },
         deletedAt: null,
       };
 
@@ -60,7 +60,7 @@ export default class doctorController {
       // Get paginated and sorted list
       const doctorList = await HDFCCases.find(filterQuery)
         .select(
-          "proposerName createdAt customerEmailId agentName contactNo status proposalNo"
+          "proposerName createdAt customerEmailId agentName contactNo status proposalNo insuredName"
         )
         .sort(sort)
         .skip(perPage * (page - 1))
@@ -232,13 +232,13 @@ export default class doctorController {
       const auth = req.body.auth;
       console.log(auth, "auth------------------------>>>>>>>>");
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req?.body?.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
       // Filter query
       const filterQuery: any = {
-        doctorId: isAdmin ? undefined : req.body.auth.user,
+        ...(isAdmin ? {} : { doctorId: req.body.auth.user }),
         status: CaseStatusEnum.RECALL,
         deletedAt: null,
       };
@@ -278,7 +278,7 @@ export default class doctorController {
       // Get paginated and sorted list
       const doctorList = await AssignMaster.find(filterQuery)
         .select(
-          "requestDate requestId proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId"
+          "requestDate requestId proposalNo proposerName insuredName mobileNo status email doctorId alternateMobileNo language callbackDate remark callViaPhone dispositionId openCaseId"
         )
         .populate({
           path: "doctorId",
@@ -408,12 +408,12 @@ export default class doctorController {
       console.log(callbackDate, "callbackDate  conversion");
 
       const isAdmin =
-        req.body.auth?.roleId?.name?.toUpperCase() == "ADMIN" ||
-        req?.body?.auth?.roleId?.name == "SUPERADMIN"
+        req.body.auth?.roleId?.name == "Admin" ||
+        req?.body?.auth?.roleId?.name == "Super_Admin"
           ? true
           : false;
 
-      const caseData = await AssignMaster.findById(casesId).lean();
+      const caseData = await AssignMaster.findById(casesId);
 
       if (!caseData) {
         res.status(404).json({
