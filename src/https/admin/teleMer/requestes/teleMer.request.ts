@@ -10,7 +10,8 @@ const subQuestionSchema = object({
 // Medical question schema with conditional validation
 const medicalQuestionSchema = object({
   _id: string().required(),
-  agree: string().oneOf(["Yes", "No"]).required(),
+  agree: string().nullable(),
+  // agree: string().oneOf(["Yes", "No"]).required(),
   question: string().required(),
   remark: string().optional(),
   id: string().optional(),
@@ -45,7 +46,7 @@ const openCaseSchema = object({
 // Individual data item schema
 const dataItemSchema = object({
   _id: string().required(),
-  alternateMobileNo: string().optional(),
+  alternateMobileNo: string().nullable(),
   openCaseId: openCaseSchema.required(),
   questions: array().of(medicalQuestionSchema).required(),
 });

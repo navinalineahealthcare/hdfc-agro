@@ -30,7 +30,7 @@ router.get(
   RequestQueryValidator(DoctorFilterRequest),
   doctorController.doctorAssigncaseList
 );
-router.get(
+router.put(
   "/close-list",
   RequestSortValidator(["proposerName", "proposalNo", "premium", "createdAt"]),
   paginationCleaner,

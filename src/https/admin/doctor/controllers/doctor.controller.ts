@@ -83,13 +83,17 @@ export default class doctorController {
     try {
       const { proposerName, productName, fromDate, toDate, search } =
         req.body.validatedQueryData || {};
+      const { type } = req?.body;
       const { page = 1, perPage = 10 } = req.body.pagination || {};
       const { sortBy = "createdAt", sortType = "desc" } =
         req.body.validatedSortData || {};
 
       // Filter query
       const filterQuery: any = {
-        status: CaseStatusEnum.CLOSED || CaseStatusEnum.CANCELLED,
+        status:
+          type === CaseStatusEnum.CLOSED
+            ? CaseStatusEnum.CLOSED
+            : CaseStatusEnum.CANCELLED,
         deletedAt: null,
       };
 
@@ -103,10 +107,12 @@ export default class doctorController {
 
       if (search && typeof search === "string" && search.trim() !== "") {
         filterQuery.$or = [
-          { proposerName: { $regex: new RegExp(search, "i") } },
-          { proposalNo: { $regex: new RegExp(search, "i") } },
-          { productName: { $regex: new RegExp(search, "i") } },
-          { caseId: { $regex: new RegExp(search, "i") } },
+          { proposerName: { $regex: new RegExp(search.trim(), "i") } },
+          { proposalNo: { $regex: new RegExp(search.trim(), "i") } },
+          { productName: { $regex: new RegExp(search.trim(), "i") } },
+          { caseId: { $regex: new RegExp(search.trim(), "i") } },
+          { insuredName: { $regex: new RegExp(search.trim(), "i") } },
+          { mobileNo: { $regex: new RegExp(search.trim(), "i") } },
         ];
       }
 
@@ -123,12 +129,12 @@ export default class doctorController {
       };
 
       // Count total documents
-      const totalCount = await HDFCCases.countDocuments(filterQuery);
+      const totalCount = await AssignMaster.countDocuments(filterQuery);
 
       // Get paginated and sorted list
-      const doctorList = await HDFCCases.find(filterQuery)
+      const doctorList = await AssignMaster.find(filterQuery)
         .select(
-          "proposerName createdAt customerEmailId agentName contactNo status proposalNo"
+          "proposerName createdAt email insuredName language mobileNo status proposalNo"
         )
         .sort(sort)
         .skip(perPage * (page - 1))
