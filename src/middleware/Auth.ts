@@ -6,7 +6,7 @@ import { Admin } from "../https/admin/auth/model/admin.model";
 
 import { Device } from "../https/admin/auth/model/device.model";
 import { statusEnum } from "../https/common/enums";
-
+import { AssignMaster } from "../https/admin/doctor/models/assignMaster.model";
 
 // export const verifyToken = (
 //   req: Request,
@@ -49,28 +49,28 @@ export const verifyToken = async (
       if (req.baseUrl.indexOf("/api/admin") != -1) {
         const admin: any = await Admin.findOne({
           _id: decoded.id,
-        })
+        });
         if (!admin) {
-           res.status(401).json({
+          res.status(401).json({
             status: false,
             message: req.t("user.user_not_found"),
           });
         }
         if (admin.roleId == null) {
-           res.status(401).json({
+          res.status(401).json({
             status: false,
             message: req.t("user.user_not_found"),
           });
         }
         if (admin.status == statusEnum.INACTIVE) {
-           res.status(401).json({
+          res.status(401).json({
             status: false,
             message: req.t("user.user_inactive"),
           });
         }
 
         if (admin.deletedAt != null) {
-           res.status(401).json({
+          res.status(401).json({
             status: false,
             message: req.t("user.user_deleted"),
           });
@@ -94,7 +94,67 @@ export const verifyToken = async (
       throw "user not found";
     }
   } catch (err) {
-     res.status(401).send({
+    res.status(401).send({
+      status: false,
+      message: "Unauthorized",
+    });
+  }
+  return next();
+};
+export const verifyCasesToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const bearerToken = req.headers["authorization"];
+  let token = null;
+  if (bearerToken) {
+    token = bearerToken.split(" ")[1];
+  }
+
+  if (!token) {
+    res.status(401).send({
+      status: false,
+      message: "Unauthorized",
+    });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, env.auth.secret);
+    console.warn(decoded, "----------------decoded->>>>");
+
+    if (typeof decoded !== "string") {
+      if (req.baseUrl.indexOf("/api/sales") != -1) {
+        const admin: any = await AssignMaster.findOne({
+          _id: decoded.id,
+        });
+        console.warn(admin, "----------------decoded->>>>");
+        if (!admin) {
+          res.status(401).json({
+            status: false,
+            message: req.t("user.user_not_found"),
+          });
+        }
+      }
+
+      const device = await Device.findOne({
+        authToken: token,
+      });
+      console.warn(device, "----------------device->>>>");
+
+      if (!device) {
+        throw "Invalid Token";
+      }
+      req.body.auth = {
+        token: token,
+        device: device,
+      };
+    } else {
+      throw "user not found";
+    }
+  } catch (err) {
+    res.status(401).send({
       status: false,
       message: "Unauthorized",
     });
@@ -111,7 +171,7 @@ export const verifyResetToken = async (
     const token = req.query.token;
 
     if (!token || typeof token !== "string") {
-       res.status(401).send({
+      res.status(401).send({
         status: false,
         message: req.t("user.invalid_reset_link"),
       });
@@ -120,7 +180,7 @@ export const verifyResetToken = async (
 
     const decoded = jwt.verify(token as string, env.auth.secret);
     if (typeof decoded === "string") {
-       res.send({
+      res.send({
         status: false,
         message: req.t("user.link_expired"),
       });
@@ -131,7 +191,7 @@ export const verifyResetToken = async (
     });
 
     if (!admin) {
-       res.send({
+      res.send({
         status: false,
         message: req.t("user.link_expired"),
       });
@@ -144,7 +204,7 @@ export const verifyResetToken = async (
 
     next();
   } catch (err) {
-     res.send({
+    res.send({
       status: false,
       message: req.t("user.invalid_reset_link"),
     });
