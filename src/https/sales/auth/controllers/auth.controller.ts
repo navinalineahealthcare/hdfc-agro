@@ -7,17 +7,25 @@ import {
   createToken,
   deleteDevice,
 } from "../services/auth.service";
+import { escapeRegex } from "../../../../utils/utils";
 class authSalesController {
   public static async loginWithProposalNum(req: Request, res: Response) {
     try {
       const { proposalNum, deviceType, notificationToken } =
         req.body.validatedData;
+      const normalizedInput = escapeRegex(proposalNum.trim()).replace(
+        /\s+/g,
+        "\\s*\\.?\\s*"
+      );
+
+      // Regex pattern for exact full-name match with flexibility
+      const regexPattern = `^${normalizedInput}$`;
 
       const cases = await AssignMaster.find({
         $or: [
-          { proposalNo: proposalNum },
-          { proposerName: proposalNum },
-          { insuredName: proposalNum },
+          { proposalNo: { $regex: regexPattern, $options: "i" } },
+          { proposerName: { $regex: regexPattern, $options: "i" } },
+          { insuredName: { $regex: regexPattern, $options: "i" } },
         ],
       }).lean();
 
@@ -48,9 +56,8 @@ class authSalesController {
 
       res.status(200).json({
         status: true,
-        data: cases, // replace with actual required data if needed
         accessToken: token,
-        message: req.t("user.logged_in"),
+        message: `Logged In successfully with ${cases[0]?.proposalNo} number`,
       });
       return;
     } catch (error: any) {
