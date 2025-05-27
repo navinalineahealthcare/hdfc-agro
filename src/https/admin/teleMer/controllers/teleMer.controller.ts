@@ -3,6 +3,9 @@ import { CaseStatusEnum, rolesEnum, statusEnum } from "../../../common/enums";
 import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 import { AssignMaster } from "../../doctor/models/assignMaster.model";
 import { TeleMer } from "../models/teleMer.model";
+import PdfPrinter from "pdfmake";
+import path from "path";
+import fs from "fs";
 
 export default class teleMerController {
   public static async teleMerlist(req: Request, res: Response) {
@@ -276,4 +279,226 @@ export default class teleMerController {
       });
     }
   }
+
+  public static async teleMerPdfConvert(req: Request, res: Response) {
+    const { id: caseId } = req.body.validatedParamsData;
+
+    try {
+      const teleMerData = await TeleMer.find({
+        deletedAt: null,
+        caseId,
+      }).select("qcTeleMerData");
+
+      const userData = await AssignMaster.find({
+        _id: caseId,
+        deletedAt: null,
+      })
+        .select(
+          "-dispositionId -callbackDate -callViaPhone -remark -doctorId -status -email -history"
+        )
+        .populate({
+          path: "openCaseId",
+          select:
+            "language address city state pincode age gender clientDob weight height bmi relationship educationQualification occupation",
+          match: { deletedAt: null },
+        })
+        .lean();
+      const paragraphHeader =
+        "Transcript of the Telephonic Medical Examination Report";
+      const paragraph = `
+      This is the transcript of the answers provided by Life to be insured verbally to the questions asked below in a telephonic verification by the underwriter of HDFC Ergo General Insurance-. The answers provided by the Life to be insured would form a part of the application for insurance. The company has accepted the answers provided in utmost good faith and thereby issued the policy. The Company reserves the rights to repudiate any claim arising out of this policy in the event of any mis-statement or suppression of material information found either in the said verification or in the application form.
+We request you to go through the transcript carefully. In case of any disagreement, you are requested to highlight the same within 15 days of the receipt of this transcript; otherwise this would be taken as acceptable to you and thereby binding on you. Please retain this transcript for future reference.
+      `;
+
+      const logoBase64 = fs
+        .readFileSync("/Assets/Image/life-connect.png")
+        .toString("base64");
+      const logoDataUrl = `data:image/png;base64,${logoBase64}`;
+
+      generatePdf(
+        userData,
+        teleMerData,
+        paragraphHeader,
+        paragraph,
+        res,
+        logoDataUrl
+      );
+
+      console.log({ teleMerData });
+      console.log({ userData });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      res.status(500).json({
+        status: false,
+        message: "Failed to generate PDF.",
+      });
+    }
+  }
+}
+
+import type { TDocumentDefinitions, Content } from "pdfmake/interfaces";
+
+function generatePdf(
+  userData: any,
+  teleMerData: any,
+  paragraphHeader: string,
+  paragraphText: string,
+  res: any,
+  logoDataUrl: any
+) {
+  // Extract first object (if it's an array)
+  const user = userData[0];
+  const openCase = user.openCaseId || {};
+  const qcTeleMerArray = (teleMerData[0] || {}).qcTeleMerData || [];
+
+  // ✅ Prepare Table 1: From userData and openCaseId
+  const table1Body = [
+    [
+      { text: "Proposal No", bold: true },
+      user.proposalNo || "",
+      { text: "Weight", bold: true },
+      openCase.weight || "",
+    ],
+    [
+      { text: "Proposer Name", bold: true },
+      user.proposerName || "",
+      { text: "Height", bold: true },
+      openCase.height || "",
+    ],
+    [
+      { text: "Mobile No", bold: true },
+      user.mobileNo || "",
+      { text: "Language", bold: true },
+      user.language || "",
+    ],
+    [
+      { text: "Email", bold: true },
+      user.email || "",
+      { text: "Alternate No", bold: true },
+      user.alternateMobileNo || "",
+    ],
+  ];
+
+  // ✅ Prepare Table 2: From qcTeleMerData array
+  const table2Body: any[][] = [];
+
+  function formatSubQuestions(subQuestions: any[] = []): any {
+    if (!Array.isArray(subQuestions) || subQuestions.length === 0) return "";
+
+    return {
+      stack: subQuestions
+        .map((q, idx) => [
+          { text: `${idx + 1}. ${q.text}`, bold: true },
+          { text: `- ${q.answer}`, margin: [0, 0, 0, 5] },
+        ])
+        .flat(),
+      margin: [0, 2, 0, 2],
+    };
+  }
+
+  if (qcTeleMerArray.length > 0) {
+    const excludeKeys = ["_id", "isOnlyFemale", "agree", "subQuestions"];
+
+    // 1. Prepare headers once
+    const headers = Object.keys(qcTeleMerArray[0])
+      .filter((key) => !excludeKeys.includes(key))
+      .concat("subQuestions");
+    // 2. Push header row
+    console.log(":: headers.length >>", headers.length);
+    console.log(":: table2Body.length >>", table2Body.length);
+    if (!table2Body.length) {
+      table2Body.push(headers.map((key) => ({ text: key, bold: true })));
+    }
+
+    // 3. Push each data row
+    qcTeleMerArray.forEach((item: any) => {
+      const row = headers.map((key) => {
+        if (key === "subQuestions") {
+          return formatSubQuestions(item.subQuestions);
+        }
+
+        const value = item[key];
+        return typeof value === "object" ? JSON.stringify(value) : value;
+      });
+
+      table2Body.push(row);
+    });
+  }
+
+  const colCount = table2Body[0]?.length || 1;
+  const widths = Array(colCount).fill("auto");
+  if (colCount > 1) widths[colCount - 1] = "*";
+
+  const docDefinition: TDocumentDefinitions = {
+    content: [
+      // {
+      //   image: logoDataUrl,
+      //   width: 150, // adjust width as needed
+      //   alignment: "center", // center the logo horizontally
+      //   margin: [0, 0, 0, 20], // bottom margin to add space below logo
+      // },
+      {
+        text: paragraphHeader,
+        style: "header",
+        alignment: "center",
+      } as Content,
+      { text: paragraphText, margin: [0, 0, 0, 20] } as Content,
+      { text: "User Details Table", style: "header" } as Content,
+      {
+        table: {
+          headerRows: 0,
+          widths: ["20%", "30%", "20%", "30%"], // adjust as needed
+          body: table1Body,
+        },
+        layout: "lightHorizontalLines", // this adds proper borders
+        margin: [0, 0, 0, 20],
+        style: "tableCell",
+      } as Content,
+
+      {
+        text: "TeleMer Data Table",
+        style: "header",
+        margin: [0, 10, 0, 5],
+      } as Content,
+
+      {
+        table: {
+          headerRows: 0,
+          widths: ["7%", "20%", "20%", "*"],
+          body: table2Body.length ? table2Body : [["No data available"]],
+        },
+        // layout: "lightHorizontalLines",
+        // pageBreak: "before",
+        margin: [0, 5, 0, 20],
+        style: "tableCell",
+      } as Content,
+    ],
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true,
+        margin: [0, 10, 0, 10],
+      },
+      tableCell: {
+        fontSize: 10,
+        margin: [2, 2, 2, 2],
+      },
+    },
+  };
+
+  const fonts = {
+    Roboto: {
+      normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
+      bold: path.resolve(__dirname, "../fonts/Roboto-Bold.ttf"),
+      italics: path.resolve(__dirname, "../fonts/Roboto-Italic.ttf"),
+      bolditalics: path.resolve(__dirname, "../fonts/Roboto-BoldItalic.ttf"),
+    },
+  };
+  const printer = new PdfPrinter(fonts);
+  const pdfDoc = printer.createPdfKitDocument(docDefinition);
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "attachment; filename=report.pdf");
+  pdfDoc.pipe(res);
+  pdfDoc.end();
 }
