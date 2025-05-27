@@ -310,10 +310,20 @@ export default class teleMerController {
 We request you to go through the transcript carefully. In case of any disagreement, you are requested to highlight the same within 15 days of the receipt of this transcript; otherwise this would be taken as acceptable to you and thereby binding on you. Please retain this transcript for future reference.
       `;
 
-      const logoBase64 = fs
-        .readFileSync("/Assets/Image/life-connect.png")
-        .toString("base64");
-      const logoDataUrl = `data:image/png;base64,${logoBase64}`;
+      const leftLogoPath = path.join(
+        __dirname,
+        "../../../../../public/Assets/Image/hdfc-ergo-logo.jpg"
+      );
+      const rightLogoPath = path.join(
+        __dirname,
+        "../../../../../public/Assets/Image/life-connect.png"
+      );
+      const leftLogoBase64 = fs.readFileSync(leftLogoPath).toString("base64");
+      const rightLogoBase64 = fs.readFileSync(rightLogoPath).toString("base64");
+
+      // Add the image prefix
+      const leftLogoDataUrl = `data:image/png;base64,${leftLogoBase64}`;
+      const rightLogoDataUrl = `data:image/png;base64,${rightLogoBase64}`;
 
       generatePdf(
         userData,
@@ -321,7 +331,8 @@ We request you to go through the transcript carefully. In case of any disagreeme
         paragraphHeader,
         paragraph,
         res,
-        logoDataUrl
+        leftLogoDataUrl,
+        rightLogoDataUrl
       );
 
       console.log({ teleMerData });
@@ -344,7 +355,8 @@ function generatePdf(
   paragraphHeader: string,
   paragraphText: string,
   res: any,
-  logoDataUrl: any
+  leftLogoDataUrl: any,
+  rightLogoDataUrl: any
 ) {
   // Extract first object (if it's an array)
   const user = userData[0];
@@ -356,26 +368,51 @@ function generatePdf(
     [
       { text: "Proposal No", bold: true },
       user.proposalNo || "",
-      { text: "Weight", bold: true },
-      openCase.weight || "",
+      { text: "Date", bold: true },
+      user.requestDate || "",
     ],
     [
       { text: "Proposer Name", bold: true },
       user.proposerName || "",
-      { text: "Height", bold: true },
-      openCase.height || "",
+      { text: "DOB of Proposer", bold: true },
+      user.language || "",
+    ],
+    [
+      { text: "Member Name", bold: true },
+      user.insuredName || "",
+      { text: "DOB of Member", bold: true },
+      openCase.clientDob || "",
+    ],
+    [
+      { text: "Relationship to Proposer", bold: true },
+      openCase.relationship || "",
+      { text: "Gender", bold: true },
+      openCase.gender || "",
     ],
     [
       { text: "Mobile No", bold: true },
       user.mobileNo || "",
-      { text: "Language", bold: true },
-      user.language || "",
-    ],
-    [
-      { text: "Email", bold: true },
-      user.email || "",
       { text: "Alternate No", bold: true },
       user.alternateMobileNo || "",
+    ],
+    [
+      { text: "Height", bold: true },
+      openCase.height || "",
+      { text: "Weight", bold: true },
+      openCase.weight || "",
+    ],
+
+    [
+      { text: "BMI", bold: true },
+      openCase.bmi || "",
+      { text: "Location", bold: true },
+      openCase.address || "",
+    ],
+    [
+      { text: "Educational qualification", bold: true },
+      openCase.educationQualification || "",
+      { text: "Occupation Details", bold: true },
+      openCase.occupation || "",
     ],
   ];
 
@@ -431,12 +468,26 @@ function generatePdf(
 
   const docDefinition: TDocumentDefinitions = {
     content: [
-      // {
-      //   image: logoDataUrl,
-      //   width: 150, // adjust width as needed
-      //   alignment: "center", // center the logo horizontally
-      //   margin: [0, 0, 0, 20], // bottom margin to add space below logo
-      // },
+      {
+        columns: [
+          {
+            image: leftLogoDataUrl, // Left logo
+            width: 100,
+            alignment: "left",
+          },
+          {
+            text: "", // this is an invisible spacer
+            width: "*",
+          },
+          {
+            image: rightLogoDataUrl, // Right logo
+            width: 100,
+            margin: [0, 30, 0, 0],
+            alignment: "right",
+          },
+        ],
+        margin: [0, 0, 0, 20], // Add spacing below the logos
+      },
       {
         text: paragraphHeader,
         style: "header",
@@ -450,7 +501,7 @@ function generatePdf(
           widths: ["20%", "30%", "20%", "30%"], // adjust as needed
           body: table1Body,
         },
-        layout: "lightHorizontalLines", // this adds proper borders
+        // layout: "lightHorizontalLines", // this adds proper borders
         margin: [0, 0, 0, 20],
         style: "tableCell",
       } as Content,
