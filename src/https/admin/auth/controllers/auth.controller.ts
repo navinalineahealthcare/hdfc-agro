@@ -26,6 +26,8 @@ import passport from "passport";
 import path from "path";
 import { statusEnum } from "../../../common/enums";
 import { Device } from "../model/device.model";
+import { MailService } from "../../../../services/mail/mailServices";
+import { testSMTP } from "../../../../libs/mail/mail";
 
 class authController {
   public static async register(req: Request, res: Response) {
@@ -76,7 +78,6 @@ class authController {
         req.body.validatedData;
 
       let admin: any = null;
-
 
       if (email) {
         admin = await loginService(email ?? contactCode, password);
@@ -327,12 +328,13 @@ class authController {
     try {
       const { userId } = req.body.auth.device;
 
-      let getUserProfile = await Admin.findById(userId).select(
-        "-password -forgotPasswordToken -deletedAt -createdAt -updatedAt -__v "
-      ).populate(
-        {
-        path: "roleId",
-        select: "-createdAt -updatedAt -deletedAt -__v",
+      let getUserProfile = await Admin.findById(userId)
+        .select(
+          "-password -forgotPasswordToken -deletedAt -createdAt -updatedAt -__v "
+        )
+        .populate({
+          path: "roleId",
+          select: "-createdAt -updatedAt -deletedAt -__v",
         });
 
       if (!getUserProfile) {
@@ -355,58 +357,95 @@ class authController {
     }
   }
 
+  // public static async forgot(req: Request, res: Response) {
+  //   try {
+  //     const { email } = req.body.validatedData;
+
+  //     console.log(email,"-------------=0")
+  //     const admin = await Admin.findOne({ email: email });
+  //     if (!admin) {
+  //       res.status(400).json({
+  //         status: false,
+  //         message: "Admin not found with this email.",
+  //       });
+  //     }
+  //     // @ts-ignore
+  //     const token = jwt.sign({ adminId: admin?._id }, env.auth.secret, {
+  //       expiresIn: env.auth.forgotPasswordExpiredIn,
+  //     });
+
+  //     await Admin.findByIdAndUpdate(
+  //       { _id: admin?.id },
+  //       { $set: { forgotPasswordToken: token } }
+  //     );
+
+  //     //mail sent process
+  //     const url = `http://localhost:4000/reset_password?token=${token}`; //change
+  //     const subject = "Reset your password";
+  //     const templateData = { link: url };
+  //     const pathValue = env.app.host === "local" ? "src" : "dist";
+
+  //     const emailTemplate = fs.readFileSync(
+  //       path.join(__dirname, "views/email/forgotPassword.hbs"),
+  //       "utf-8"
+  //     );
+
+  //     const data = {
+  //       email,
+  //       data: templateData,
+  //       subject,
+  //       emailTemplate,
+  //     };
+
+  //     await MailService.queueForgotPasswordEmail(email,data);
+
+  //     res.status(200).json({
+  //       status: true,
+  //       message: req.t("user.forgot_password_reset_link"),
+  //     });
+  //   } catch (error: any) {
+  //     res.status(400).json({
+  //       status: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // }
   public static async forgot(req: Request, res: Response) {
     try {
       const { email } = req.body.validatedData;
 
-      const admin = await Admin.findOne({ email: email });
+      const admin = await Admin.findOne({ email });
       if (!admin) {
-        res.status(400).json({
+         res.status(400).json({
           status: false,
           message: "Admin not found with this email.",
         });
+        return
       }
+
       // @ts-ignore
-      const token = jwt.sign({ adminId: admin?._id }, env.auth.secret, {
+      const token = jwt.sign({ adminId: admin._id }, env.auth.secret, {
         expiresIn: env.auth.forgotPasswordExpiredIn,
       });
 
-      await Admin.findByIdAndUpdate(
-        { _id: admin?.id },
-        { $set: { forgotPasswordToken: token } }
-      );
+      await Admin.findByIdAndUpdate(admin._id, {
+        $set: { forgotPasswordToken: token },
+      });
 
-      //mail sent process
-      const url = `http://localhost:4000/reset_password?token=${token}`; //change
-      const subject = "Reset your password";
-      const templateData = { link: url };
-      const pathValue = env.app.host === "local" ? "src" : "dist";
+      const resetLink = `${env.app.host}/reset_password?token=${token}`;
 
-      // const templatePath = path.join(
-      //   __dirname,
-      //   `../../../../${pathValue}/views/email/forgotPassword.hbs`
-      // );
-
-      const emailTemplate = fs.readFileSync(
-        path.join(__dirname, "views/email/forgotPassword.hbs"),
-        "utf-8"
-      );
-
-      const data = {
-        email,
-        data: templateData,
-        subject,
-        emailTemplate,
-      };
-
-      // await sendForgotPasswordEmail(data);
+      await MailService.queueForgotPasswordEmail(email, {
+        link: resetLink,
+        name: `${admin.firstName ?? ""} ${admin.lastName ?? ""}`.trim(),
+      });
 
       res.status(200).json({
         status: true,
         message: req.t("user.forgot_password_reset_link"),
       });
     } catch (error: any) {
-      res.status(400).json({
+      console.error("Forgot password error:", error);
+      res.status(500).json({
         status: false,
         message: error.message,
       });

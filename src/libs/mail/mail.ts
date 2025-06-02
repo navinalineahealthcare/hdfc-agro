@@ -9,6 +9,9 @@ const options = {
     user: env.mail.username,
     pass: env.mail.password,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 };
 
 const transporter = nodemailer.createTransport(options);
@@ -22,9 +25,19 @@ transporter.use(
       extname: ".hbs", // handlebars extension
       layoutsDir: `${env.app.root_dir}/views/email/`, // location of handlebars templates
       defaultLayout: "layout", // name of main template
+      // defaultLayout: false,
       partialsDir: `${env.app.root_dir}/views/email/`, // location of your subtemplates aka. header, footer etc
     },
   })
 );
 
 export default transporter;
+
+export async function testSMTP() {
+  try {
+    await transporter.verify();
+    console.log("SMTP server is ready to take messages");
+  } catch (error) {
+    console.error("SMTP connection failed:", error);
+  }
+}
