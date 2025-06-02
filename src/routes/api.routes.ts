@@ -5,6 +5,7 @@ import countryStateCityRouter from "../https/country-state-city/routes/country-s
 
 import adminRoutes from "../https/admin/index.routes";
 import saleRoutes from "../https/sales/index.routes";
+import medicalRoutes from "../https/medical/index.routes";
 import UploadRouter from "../https/upload/routes/upload.routes";
 import HDFCCasesRouter from "../https/common/hdfcCases/routes/hdfcCases.routes";
 import CommonAPIRouter from "../https/common/commanAPI/routes/disposition.routes";
@@ -17,6 +18,7 @@ router.use("/", pingRoutes);
 
 router.use("/admin", adminRoutes);
 router.use("/sales", saleRoutes);
+router.use("/medical", medicalRoutes);
 router.use("/country-state-city", countryStateCityRouter);
 router.use("/upload", UploadRouter);
 router.use("/data", HDFCCasesRouter);

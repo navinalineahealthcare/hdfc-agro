@@ -23,11 +23,15 @@ export const MailService = {
       context,
     };
 
+    // Here you would typically add the job to a queue system
+    // For example, using Bull or any other job queue library
+    // await jobQueue.add("forgotPasswordEmail", jobData);
+    
     await this.sendMailNow(jobData);
   },
 
+
   async sendMailNow({ to, subject, template, context }: SendMailJobData) {
-    
     const mailOptions: TemplateMailOptions = {
       from: env.mail.from_address,
       to,
@@ -35,7 +39,6 @@ export const MailService = {
       template,
       context,
     };
-
     try {
       await transporter.sendMail(mailOptions);
     } catch (error: any) {

@@ -357,59 +357,6 @@ class authController {
     }
   }
 
-  // public static async forgot(req: Request, res: Response) {
-  //   try {
-  //     const { email } = req.body.validatedData;
-
-  //     console.log(email,"-------------=0")
-  //     const admin = await Admin.findOne({ email: email });
-  //     if (!admin) {
-  //       res.status(400).json({
-  //         status: false,
-  //         message: "Admin not found with this email.",
-  //       });
-  //     }
-  //     // @ts-ignore
-  //     const token = jwt.sign({ adminId: admin?._id }, env.auth.secret, {
-  //       expiresIn: env.auth.forgotPasswordExpiredIn,
-  //     });
-
-  //     await Admin.findByIdAndUpdate(
-  //       { _id: admin?.id },
-  //       { $set: { forgotPasswordToken: token } }
-  //     );
-
-  //     //mail sent process
-  //     const url = `http://localhost:4000/reset_password?token=${token}`; //change
-  //     const subject = "Reset your password";
-  //     const templateData = { link: url };
-  //     const pathValue = env.app.host === "local" ? "src" : "dist";
-
-  //     const emailTemplate = fs.readFileSync(
-  //       path.join(__dirname, "views/email/forgotPassword.hbs"),
-  //       "utf-8"
-  //     );
-
-  //     const data = {
-  //       email,
-  //       data: templateData,
-  //       subject,
-  //       emailTemplate,
-  //     };
-
-  //     await MailService.queueForgotPasswordEmail(email,data);
-
-  //     res.status(200).json({
-  //       status: true,
-  //       message: req.t("user.forgot_password_reset_link"),
-  //     });
-  //   } catch (error: any) {
-  //     res.status(400).json({
-  //       status: false,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
   public static async forgot(req: Request, res: Response) {
     try {
       const { email } = req.body.validatedData;

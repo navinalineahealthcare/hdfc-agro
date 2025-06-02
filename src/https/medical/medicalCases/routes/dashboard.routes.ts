@@ -1,16 +1,12 @@
 import { Router } from "express";
-import appointmentController from "../controllers/dashboard.controller";
-import salescasesController from "../controllers/dashboard.controller";
-import { verifyCasesToken } from "../../../../middleware/Auth";
 import { paginationCleaner } from "../../../../middleware/Pagination";
 import {
-  RequestParamsValidator,
-  RequestQueryValidator,
+  RequestQueryValidator
 } from "../../../../middleware/RequestValidator";
 import {
-  assignParamIdRequest,
-  DoctorFilterRequest,
+  DoctorFilterRequest
 } from "../../../admin/doctor/requests/doctor.resquest";
+import dashboardcasesController from "../controllers/dashboard.controller";
 
 const router = Router();
 
@@ -18,12 +14,8 @@ router.get(
   "/list",
   paginationCleaner,
   RequestQueryValidator(DoctorFilterRequest),
-  salescasesController.salescasesList
+  dashboardcasesController.dashboardSalesCasesList
 );
-router.get(
-  "/details/:id",
-  RequestParamsValidator(assignParamIdRequest),
-  appointmentController.salescasesdetails
-);
+
 
 export default router;
