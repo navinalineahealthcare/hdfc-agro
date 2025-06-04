@@ -199,7 +199,7 @@ export default class doctorController {
         callbackDate: null,
         remark: [],
         callViaPhone: false,
-        dispositionId: null,
+        dispositionId: [],
         createdBy: new Types.ObjectId(userId),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -291,7 +291,7 @@ export default class doctorController {
           select: "firstName lastName email",
         })
         .populate({
-          path: "dispositionId",
+          path: "dispositionId.id",
           select: "name description status",
         })
         .sort(sort)

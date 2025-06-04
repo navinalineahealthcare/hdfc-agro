@@ -215,7 +215,7 @@ export default class qcDoctorController {
           select: "firstName lastName email",
         })
         .populate({
-          path: "dispositionId",
+          path: "dispositionId.id",
           select: "name description status",
         })
         .sort(sort)

@@ -70,5 +70,8 @@
     "done": "File uploaded successfully!",
     "image_required": "{{model}} path image is required",
     "error": "Image not uploaded.please try again"
+  },
+    "salescases": {
+    "list": "sales cases list"
   }
 }

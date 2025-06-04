@@ -122,14 +122,14 @@ export const verifyCasesToken = async (
 
   try {
     const decoded = jwt.verify(token, env.auth.secret);
-    console.warn(decoded, "----------------decoded->>>>");
+    // console.warn(decoded, "----------------decoded->>>>");
 
     if (typeof decoded !== "string") {
       if (req.baseUrl.indexOf("/api/sales") != -1) {
         const admin: any = await AssignMaster.findOne({
           _id: decoded.id,
         });
-        console.warn(admin, "----------------decoded->>>>");
+        // console.warn(admin, "----------------decoded->>>>");
         if (!admin) {
           res.status(401).json({
             status: false,
@@ -141,7 +141,7 @@ export const verifyCasesToken = async (
       const device = await Device.findOne({
         authToken: token,
       });
-      console.warn(device, "----------------device->>>>");
+      // console.warn(device, "----------------device->>>>");
 
       if (!device) {
         throw "Invalid Token";

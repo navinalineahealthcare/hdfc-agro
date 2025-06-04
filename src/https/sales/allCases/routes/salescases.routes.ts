@@ -26,4 +26,18 @@ router.get(
   appointmentController.salescasesdetails
 );
 
+router.get(
+  "/call-disposition/:id",
+  paginationCleaner,
+  RequestParamsValidator(assignParamIdRequest),
+  appointmentController.salesCasesCallDisposition
+);
+
+router.get(
+  "/status/:id",
+  paginationCleaner,
+  RequestParamsValidator(assignParamIdRequest),
+  appointmentController.salesCasesStatusDetails
+);
+
 export default router;
