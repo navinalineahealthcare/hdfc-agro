@@ -56,24 +56,45 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     //   ref: "dispositions",
     //   default: null,
     // },
-    dispositionId: [
-      {
-        id: {
-          type: Schema.Types.ObjectId,
-          ref: "dispositions",
-          default: null,
+    // dispositionId: [
+    //   {
+    //     id: {
+    //       type: Schema.Types.ObjectId,
+    //       ref: "dispositions",
+    //       default: null,
+    //     },
+    //     changedAt: {
+    //       type: Date,
+    //       default: Date.now,
+    //     },
+    //     changedBy: {
+    //       type: Schema.Types.ObjectId,
+    //       ref: "admins",
+    //       required: true,
+    //     },
+    //   },
+    // ],
+    dispositionId: {
+      type: [
+        {
+          id: {
+            type: Schema.Types.ObjectId,
+            ref: "dispositions",
+            default: null,
+          },
+          changedAt: {
+            type: Date,
+            default: Date.now,
+          },
+          changedBy: {
+            type: Schema.Types.ObjectId,
+            ref: "admins",
+            required: true,
+          },
         },
-        changedAt: {
-          type: Date,
-          default: Date.now,
-        },
-        changedBy: {
-          type: Schema.Types.ObjectId,
-          ref: "admins",
-          required: true,
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
     createdBy: { type: Schema.Types.ObjectId, ref: "admins", default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

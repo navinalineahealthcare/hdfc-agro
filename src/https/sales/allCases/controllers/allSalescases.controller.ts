@@ -60,13 +60,15 @@ class salescasesController {
 
   public static async salescasesdetails(req: Request, res: Response) {
     try {
-      const { userId } = req.body.auth.device;
+      // const { userId } = req.body.auth.device;
       const { id: assignedToId } = req.body.validatedParamsData;
 
-      const assignCase = await AssignMaster.findById(assignedToId)
-        .populate("openCaseId")
-        .lean();
+      console.log({ assignedToId });
 
+      const assignCase = await AssignMaster.findById(assignedToId).populate(
+        "openCaseId"
+      );
+      console.log({ assignCase });
       if (!assignCase) {
         res.status(404).json({
           status: false,
@@ -88,6 +90,55 @@ class salescasesController {
       });
       return;
     }
+  }
+
+  public static async salesCasesCallDisposition(req: Request, res: Response) {
+    try {
+      const { id: assignedToId } = req.body.validatedParamsData;
+
+      const assignCase = await AssignMaster.findById(assignedToId)
+        .select("dispositionId")
+        .populate({
+          path: "dispositionId.id",
+          select: "name description status",
+        });
+
+      if (!assignCase) {
+        res.status(404).json({
+          status: false,
+          message: "Sales case call disposition details not found.",
+        });
+        return;
+      }
+      res.status(200).json({
+        status: true,
+        data: assignCase,
+        message: req.t("crud.details", { model: "Sales Case" }),
+      });
+    } catch (error) {}
+  }
+
+  public static async salesCasesStatusDetails(req: Request, res: Response) {
+    try {
+      const { id: assignedToId } = req.body.validatedParamsData;
+
+      const assignCase = await AssignMaster.findById(assignedToId).select(
+        "history"
+      );
+
+      if (!assignCase) {
+        res.status(404).json({
+          status: false,
+          message: "Sales case call disposition details not found.",
+        });
+        return;
+      }
+      res.status(200).json({
+        status: true,
+        data: assignCase,
+        message: req.t("crud.details", { model: "Sales Case" }),
+      });
+    } catch (error) {}
   }
 }
 
