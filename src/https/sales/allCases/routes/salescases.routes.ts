@@ -28,12 +28,14 @@ router.get(
 
 router.get(
   "/call-disposition/:id",
+  paginationCleaner,
   RequestParamsValidator(assignParamIdRequest),
   appointmentController.salesCasesCallDisposition
 );
 
 router.get(
   "/status/:id",
+  paginationCleaner,
   RequestParamsValidator(assignParamIdRequest),
   appointmentController.salesCasesStatusDetails
 );

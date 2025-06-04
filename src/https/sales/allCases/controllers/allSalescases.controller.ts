@@ -95,13 +95,16 @@ class salescasesController {
   public static async salesCasesCallDisposition(req: Request, res: Response) {
     try {
       const { id: assignedToId } = req.body.validatedParamsData;
+      const { page = 1, perPage = 10 } = req.body.pagination || {};
 
       const assignCase = await AssignMaster.findById(assignedToId)
         .select("dispositionId")
         .populate({
           path: "dispositionId.id",
           select: "name description status",
-        });
+        })
+        .skip(perPage * (page - 1))
+        .limit(perPage);
 
       if (!assignCase) {
         res.status(404).json({
@@ -121,10 +124,12 @@ class salescasesController {
   public static async salesCasesStatusDetails(req: Request, res: Response) {
     try {
       const { id: assignedToId } = req.body.validatedParamsData;
+      const { page = 1, perPage = 10 } = req.body.pagination || {};
 
-      const assignCase = await AssignMaster.findById(assignedToId).select(
-        "history"
-      );
+      const assignCase = await AssignMaster.findById(assignedToId)
+        .select("history")
+        .skip(perPage * (page - 1))
+        .limit(perPage);
 
       if (!assignCase) {
         res.status(404).json({
