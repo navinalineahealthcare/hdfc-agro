@@ -2,27 +2,16 @@ import { Request, Response } from "express";
 import { AssignMaster } from "../../../admin/doctor/models/assignMaster.model";
 import { pagination } from "../../../../utils/utils";
 import { salesCaseListResponse } from "../responses/dashboard.response";
+import { CaseStatusEnum } from "../../../common/enums";
 
-class salescasesController {
-  public static async salescasesList(req: Request, res: Response) {
+class medicalReportController {
+  public static async medicalReportcasesList(req: Request, res: Response) {
     try {
-      const AssignCaseId = req.body.auth.device.userId;
-
       const { page = 1, perPage = 10 } = req.body.pagination || {};
-      const { search = "" } = req.body.validatedQueryData || {};
-
-      const assignCase = await AssignMaster.findById(AssignCaseId).lean();
-
-      if (!assignCase) {
-        res.status(404).json({
-          status: false,
-          message: "Assigned case not found.",
-        });
-        return;
-      }
+      const { search = "",fromDate,toDate} = req.body.validatedQueryData || {};
 
       const filter: any = {
-        proposalNo: assignCase.proposalNo,
+        status: CaseStatusEnum.CLOSED,
         deletedAt: null,
       };
 
@@ -50,45 +39,13 @@ class salescasesController {
         message: req.t("salescases.list"),
       });
     } catch (error: any) {
-      console.error("Error in salescasesList:", error);
+      console.error("Error in report List:", error);
       res.status(500).json({
         status: false,
-        message: "Failed to fetch sales cases. Please try again.",
+        message: "Failed to fetch report cases. Please try again.",
       });
-    }
-  }
-
-  public static async salescasesdetails(req: Request, res: Response) {
-    try {
-      const { userId } = req.body.auth.device;
-      const { id: assignedToId } = req.body.validatedParamsData;
-
-      const assignCase = await AssignMaster.findById(assignedToId)
-        .populate("openCaseId")
-        .lean();
-
-      if (!assignCase) {
-        res.status(404).json({
-          status: false,
-          message: "Sales case details not found.",
-        });
-        return;
-      }
-
-      res.status(200).json({
-        status: true,
-        data: assignCase,
-        message: req.t("crud.details", { model: "Sales Case" }),
-      });
-    } catch (error: any) {
-      console.error("Error in salescasesdetails:", error);
-      res.status(500).json({
-        status: false,
-        message: "Failed to fetch case details. Please try again later.",
-      });
-      return;
     }
   }
 }
 
-export default salescasesController;
+export default medicalReportController;

@@ -14,6 +14,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     insuredName: { type: String, required: true },
     mobileNo: { type: String, required: true },
     email: { type: String, required: true },
+    tpaName: { type: String, default: null },
     status: {
       type: String,
       enum: Object.values(CaseStatusEnum),
@@ -51,29 +52,7 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     callViaPhone: { type: Boolean, default: false },
     isTeleMer: { type: Boolean, default: false },
     qcTeleMer: { type: Boolean, default: false },
-    // dispositionId: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: "dispositions",
-    //   default: null,
-    // },
-    // dispositionId: [
-    //   {
-    //     id: {
-    //       type: Schema.Types.ObjectId,
-    //       ref: "dispositions",
-    //       default: null,
-    //     },
-    //     changedAt: {
-    //       type: Date,
-    //       default: Date.now,
-    //     },
-    //     changedBy: {
-    //       type: Schema.Types.ObjectId,
-    //       ref: "admins",
-    //       required: true,
-    //     },
-    //   },
-    // ],
+
     dispositionId: {
       type: [
         {

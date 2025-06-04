@@ -5,13 +5,13 @@ import { salesCaseListResponse } from "../responses/dashboard.response";
 import { CaseStatusEnum } from "../../../common/enums";
 import HDFCCases from "../../../common/hdfcCases/models/hdfcCases.model";
 
-class dashboardcasesController {
+class dashboardMedicalController {
   /**
    * Fetches a list of dashboard sales cases with pagination and filtering options.
    * @param req - The request object containing query parameters and pagination data.
    * @param res - The response object to send the result back to the client.
    */
-  public static async dashboardSalesCasesList(req: Request, res: Response) {
+  public static async dashboardMedicalCasesList(req: Request, res: Response) {
     try {
       const { proposerName, productName, fromDate, tpaName, toDate, search } =
         req.body.validatedQueryData || {};
@@ -163,8 +163,13 @@ class dashboardcasesController {
       });
     }
   }
+  /**
+   * Fetches a list of proposal cases for the dashboard.
+   * @param req - The request object containing validated parameters.
+   * @param res - The response object to send the result back to the client.
+   */
 
-  public static async dashboardSalesCasesProposalList(
+  public static async dashboardMedicalCasesProposalList(
     req: Request,
     res: Response
   ) {
@@ -291,6 +296,155 @@ class dashboardcasesController {
       });
     }
   }
+/**
+   * Fetches detailed information about a specific medical case.
+   * @param req - The request object containing validated parameters.
+   * @param res - The response object to send the result back to the client.
+   */
+
+  public static async dashboardMedicalCasesDetails(
+    req: Request,
+    res: Response
+  ) {
+    try {
+      const { id: casesId } = req.body.validatedParamsData;
+
+      const casesData = await HDFCCases.findById(casesId).lean();
+      if (!casesData) {
+        res.status(404).json({
+          status: false,
+          message: req.t("crud.not_found", { model: "Proposal Case" }),
+        });
+        return;
+      }
+
+      const pipeline = [
+        {
+          $match: {
+            deletedAt: null,
+            _id: casesData._id,
+          },
+        },
+        {
+          $lookup: {
+            from: "assign_masters",
+            localField: "_id",
+            foreignField: "openCaseId",
+            as: "openCaseDetails",
+          },
+        },
+        {
+          $unwind: "$openCaseDetails",
+        },
+        {
+          $lookup: {
+            from: "dispositions",
+            let: {
+              dispositionIds: {
+                $ifNull: ["$openCaseDetails.dispositionId.id", []],
+              },
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$_id", "$$dispositionIds"],
+                  },
+                },
+              },
+            ],
+            as: "dispositionDetails",
+          },
+        },
+        {
+          $addFields: {
+            disposition: {
+              $cond: [
+                {
+                  $gt: [
+                    {
+                      $size: {
+                        $ifNull: ["$openCaseDetails.dispositionId", []],
+                      },
+                    },
+                    0,
+                  ],
+                },
+                {
+                  $map: {
+                    input: "$openCaseDetails.dispositionId",
+                    as: "item",
+                    in: {
+                      id: "$$item.id",
+                      changedAt: "$$item.changedAt",
+                      changedBy: "$$item.changedBy",
+                      name: {
+                        $arrayElemAt: [
+                          {
+                            $map: {
+                              input: {
+                                $filter: {
+                                  input: "$dispositionDetails",
+                                  as: "disp",
+                                  cond: { $eq: ["$$disp._id", "$$item.id"] },
+                                },
+                              },
+                              as: "matched",
+                              in: "$$matched.name",
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    },
+                  },
+                },
+                [],
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            proposerName: 1,
+            age: 1,
+            gender: 1,
+            sumInsured: 1,
+            productName: 1,
+            clientDob: 1,
+            contactNo: 1,
+            address: 1,
+            insuredName: 1,
+            customerEmailId: 1,
+            status: 1,
+            agent: {
+              agentName: "$agentName",
+              agentCode: "$agentCode",
+              agentEmailId: "$agentEmailId",
+              agentMobile: "$agentMobile",
+            },
+            history: "$openCaseDetails.history",
+            disposition: 1,
+          },
+        },
+      ];
+
+      const [caseDetail] = await HDFCCases.aggregate(pipeline);
+
+      res.status(200).json({
+        status: true,
+        data: caseDetail || null,
+        message: req.t("crud.list", { model: "Proposal Case List" }),
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: false,
+        message: error.message,
+      });
+      return;
+    }
+  }
 }
 
-export default dashboardcasesController;
+export default dashboardMedicalController;

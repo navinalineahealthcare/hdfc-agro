@@ -24,6 +24,7 @@ export interface IAssignMasterAttrs {
   proposalNo: string;
   proposerName: string;
   insuredName: string;
+  tpaName?: string;
   mobileNo: string;
   email: string;
   status: CaseStatusEnum;

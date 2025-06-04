@@ -28,7 +28,8 @@
     "verify_number_first": "Verify your number first.",
     "contactus_form_submit": "Form submitted successfully.",
     "session_expired": "Your Session has been expired, please login first.",
-    "email_exists": "Entered Email ID is already registered"
+    "email_exists": "Entered Email ID is already registered",
+    "user_not_found": "user not found"
   },
 
   "mer":{

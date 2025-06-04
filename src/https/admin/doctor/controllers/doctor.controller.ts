@@ -188,6 +188,7 @@ export default class doctorController {
         requestId: caseData.requestId,
         proposalNo: caseData.proposalNo,
         proposerName: caseData.proposerName,
+        tpaName: caseData.tpaName,
         insuredName: caseData.insuredName,
         mobileNo: caseData.contactNo,
         email: caseData.customerEmailId ?? null,

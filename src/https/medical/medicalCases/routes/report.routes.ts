@@ -7,6 +7,7 @@ import {
 import { DoctorFilterRequest } from "../../../admin/doctor/requests/doctor.resquest";
 import dashboardMedicalController from "../controllers/dashboard.controller";
 import { IdQueryParamRequest } from "../requests/id.params.request";
+import medicalReportController from "../controllers/report.controller";
 
 const router = Router();
 
@@ -14,21 +15,8 @@ router.get(
   "/list",
   paginationCleaner,
   RequestQueryValidator(DoctorFilterRequest),
-  dashboardMedicalController.dashboardMedicalCasesList
+  medicalReportController.medicalReportcasesList
 );
-router.get(
-  "/proposal-list/:id",
-  paginationCleaner,
-  RequestParamsValidator(IdQueryParamRequest),
-  RequestQueryValidator(DoctorFilterRequest),
-  dashboardMedicalController.dashboardMedicalCasesProposalList
-);
-router.get(
-  "/proposal-detail/:id",
-  paginationCleaner,
-  RequestParamsValidator(IdQueryParamRequest),
-  RequestQueryValidator(DoctorFilterRequest),
-  dashboardMedicalController.dashboardMedicalCasesDetails
-);
+
 
 export default router;
