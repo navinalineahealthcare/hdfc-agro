@@ -8,7 +8,12 @@ class medicalReportController {
   public static async medicalReportcasesList(req: Request, res: Response) {
     try {
       const { page = 1, perPage = 10 } = req.body.pagination || {};
-      const { search = "",fromDate,toDate} = req.body.validatedQueryData || {};
+      const {
+        search = "",
+        fromDate,
+        toDate,
+        tpaName,
+      } = req.body.validatedQueryData || {};
 
       const filter: any = {
         status: CaseStatusEnum.CLOSED,
@@ -21,6 +26,15 @@ class medicalReportController {
           { insuredName: { $regex: new RegExp(search, "i") } },
           { proposalNo: { $regex: new RegExp(search, "i") } },
         ];
+      }
+      // Date range filter
+      if (fromDate || toDate) {
+        filter.requestDate = {};
+        if (fromDate) filter.requestDate.$gte = new Date(fromDate);
+        if (toDate) filter.requestDate.$lte = new Date(toDate);
+      }
+      if (tpaName && typeof tpaName === "string") {
+        filter.tpaName = { $regex: new RegExp(tpaName, "i") };
       }
 
       const total = await AssignMaster.countDocuments(filter);
