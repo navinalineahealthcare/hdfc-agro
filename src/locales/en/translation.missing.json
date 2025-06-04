@@ -1,5 +1,8 @@
 {
   "salescases": {
     "list": "salescases.list"
+  },
+  "user": {
+    "user_not_found": "user.user_not_found"
   }
 }
