@@ -1,5 +1,6 @@
 import { model, Schema, Model } from 'mongoose';
-import { adminType, statusEnum } from '../types/auth.type';
+import { adminType } from '../types/auth.type';
+import { statusEnum } from '../../../common/enums';
 
 const adminSchema = new Schema({
     firstName: {
