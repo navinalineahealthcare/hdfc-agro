@@ -74,5 +74,8 @@
   },
     "salescases": {
     "list": "sales cases list"
+  },
+   "assigncases": {
+    "export": "assign cases export"
   }
 }

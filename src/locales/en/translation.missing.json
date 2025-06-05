@@ -4,5 +4,8 @@
   },
   "user": {
     "user_not_found": "user.user_not_found"
+  },
+  "assigncases": {
+    "export": "assigncases.export"
   }
 }
