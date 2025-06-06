@@ -51,12 +51,13 @@ export interface IAssignMasterAttrs {
     changedAt: Date;
     changedBy: Types.ObjectId;
   }[];
-  
+
   createdBy?: Types.ObjectId;
   createdAt?: Date;
   requestAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;
+  tranScriptUrl?: { destination: string; url: string } | null;
   history?: {
     oldStatus: CaseStatusEnum;
     newStatus: CaseStatusEnum;

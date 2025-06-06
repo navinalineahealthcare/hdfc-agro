@@ -126,10 +126,10 @@ class salescasesController {
       const { id: assignedToId } = req.body.validatedParamsData;
       const { page = 1, perPage = 10 } = req.body.pagination || {};
 
-      const assignCase = await AssignMaster.findById(assignedToId)
-        .select("history")
-        .skip(perPage * (page - 1))
-        .limit(perPage);
+      const assignCase = await AssignMaster.findById(assignedToId).select(
+        "history"
+      );
+      console.log({ assignCase });
 
       if (!assignCase) {
         res.status(404).json({
@@ -138,9 +138,23 @@ class salescasesController {
         });
         return;
       }
+
+      const { history } = assignCase;
+      console.log({ history });
+
+      const sortedHistory = Array.isArray(history)
+        ? history
+            .sort(
+              (a, b) =>
+                new Date(b.changedAt).getTime() -
+                new Date(a.changedAt).getTime()
+            )
+            .slice(perPage * (page - 1), perPage * page)
+        : [];
+
       res.status(200).json({
         status: true,
-        data: assignCase,
+        data: sortedHistory,
         message: req.t("crud.details", { model: "Sales Case" }),
       });
     } catch (error) {}

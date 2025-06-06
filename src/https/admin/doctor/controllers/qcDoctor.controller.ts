@@ -9,6 +9,7 @@ import { Role } from "../../role-and-permission/models/role";
 import { AssignMaster } from "../models/assignMaster.model";
 import { Disposition } from "../../../common/commanAPI/models/disposition.modal";
 import { TeleMer } from "../../teleMer/models/teleMer.model";
+import teleMerController from "../../teleMer/controllers/teleMer.controller";
 
 export default class qcDoctorController {
   public static async qcDoctorOpencaseList(req: Request, res: Response) {
@@ -292,6 +293,7 @@ export default class qcDoctorController {
           status: false,
           message: "Case not found",
         });
+        return;
       }
 
       let dispositionData;
@@ -319,18 +321,29 @@ export default class qcDoctorController {
         });
       }
 
+      const responseUrl = await teleMerController.teleMerPdfConvert(
+        casesId,
+        req,
+        res
+      );
+      console.log({ responseUrl });
       // Update the case with the new remark
-      await AssignMaster.findByIdAndUpdate(casesId, {
+      const newAssign = await AssignMaster.findByIdAndUpdate(casesId, {
         $set: {
           status: CaseStatusEnum.CLOSED,
+          tranScriptUrl: responseUrl,
           updatedAt: new Date(),
         },
       });
-
-      if (caseData && dispositionData && dispositionData.toSubmit) {
-        await caseData.updateStatus(CaseStatusEnum.CLOSED, new Date(), userId);
-      }
-
+      console.log({ newAssign });
+      // if (caseData && dispositionData && dispositionData.toSubmit) {
+      const newCaseData = await caseData.updateStatus(
+        CaseStatusEnum.CLOSED,
+        new Date(),
+        userId
+      );
+      // }
+      console.log({ newCaseData });
       res.status(200).json({
         status: true,
         message: req.t("crud.created", { model: "Cases" }),

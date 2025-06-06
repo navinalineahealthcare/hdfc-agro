@@ -78,6 +78,10 @@ const assignMasterSchema = new Schema<AssignMasterDoc>(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     deletedAt: { type: Date, default: null },
+    tranScriptUrl: {
+      type: { destination: String, url: String },
+      default: null,
+    },
     history: [
       {
         oldStatus: {

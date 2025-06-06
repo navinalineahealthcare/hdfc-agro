@@ -24,12 +24,12 @@ router.post(
   teleMerController.teleMerCreated
 );
 
-router.get(
-  "/pdf-convert/:id",
-  RequestParamsValidator(assignParamIdRequest),
-  (req, res, next) => {
-    Promise.resolve(teleMerController.teleMerPdfConvert(req, res)).catch(next);
-  }
-);
+// router.get(
+//   "/pdf-convert/:id",
+//   RequestParamsValidator(assignParamIdRequest),
+//   (req, res, next) => {
+//     Promise.resolve(teleMerController.teleMerPdfConvert(req, res)).catch(next);
+//   }
+// );
 
 export default router;

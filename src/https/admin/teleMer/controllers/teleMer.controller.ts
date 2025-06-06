@@ -6,6 +6,7 @@ import { TeleMer } from "../models/teleMer.model";
 import PdfPrinter from "pdfmake";
 import path from "path";
 import fs from "fs";
+import getStream from "get-stream";
 
 export default class teleMerController {
   public static async teleMerlist(req: Request, res: Response) {
@@ -280,8 +281,12 @@ export default class teleMerController {
     }
   }
 
-  public static async teleMerPdfConvert(req: Request, res: Response) {
-    const { id: caseId } = req.body.validatedParamsData;
+  public static async teleMerPdfConvert(
+    caseId: string,
+    req: Request,
+    res: Response
+  ) {
+    // const { id: caseId } = req.body.validatedParamsData;
 
     try {
       const teleMerData = await TeleMer.find({
@@ -334,22 +339,19 @@ We request you to go through the transcript carefully. In case of any disagreeme
         leftLogoDataUrl,
         rightLogoDataUrl
       );
-
-      console.log({ teleMerData });
-      console.log({ userData });
     } catch (error) {
       console.error("PDF generation error:", error);
-      res.status(500).json({
-        status: false,
-        message: "Failed to generate PDF.",
-      });
+      throw new Error(`PDF generation failed: ${error || "Unknown error"}`);
     }
   }
 }
 
 import type { TDocumentDefinitions, Content } from "pdfmake/interfaces";
+import { PassThrough } from "stream";
+import { internalUploadToS3 } from "../../../../utils/utils";
+import { t } from "i18next";
 
-function generatePdf(
+async function generatePdf(
   userData: any,
   teleMerData: any,
   paragraphHeader: string,
@@ -358,198 +360,229 @@ function generatePdf(
   leftLogoDataUrl: any,
   rightLogoDataUrl: any
 ) {
-  // Extract first object (if it's an array)
-  const user = userData[0];
-  const openCase = user.openCaseId || {};
-  const qcTeleMerArray = (teleMerData[0] || {}).qcTeleMerData || [];
+  try {
+    // Extract first object (if it's an array)
+    const user = userData[0];
+    const openCase = user.openCaseId || {};
+    const qcTeleMerArray = (teleMerData[0] || {}).qcTeleMerData || [];
 
-  // ✅ Prepare Table 1: From userData and openCaseId
-  const table1Body = [
-    [
-      { text: "Proposal No", bold: true },
-      user.proposalNo || "",
-      { text: "Date", bold: true },
-      user.requestDate || "",
-    ],
-    [
-      { text: "Proposer Name", bold: true },
-      user.proposerName || "",
-      { text: "DOB of Proposer", bold: true },
-      user.language || "",
-    ],
-    [
-      { text: "Member Name", bold: true },
-      user.insuredName || "",
-      { text: "DOB of Member", bold: true },
-      openCase.clientDob || "",
-    ],
-    [
-      { text: "Relationship to Proposer", bold: true },
-      openCase.relationship || "",
-      { text: "Gender", bold: true },
-      openCase.gender || "",
-    ],
-    [
-      { text: "Mobile No", bold: true },
-      user.mobileNo || "",
-      { text: "Alternate No", bold: true },
-      user.alternateMobileNo || "",
-    ],
-    [
-      { text: "Height", bold: true },
-      openCase.height || "",
-      { text: "Weight", bold: true },
-      openCase.weight || "",
-    ],
+    // ✅ Prepare Table 1: From userData and openCaseId
+    const table1Body = [
+      [
+        { text: "Proposal No", bold: true },
+        user.proposalNo || "",
+        { text: "Date", bold: true },
+        user.requestDate || "",
+      ],
+      [
+        { text: "Proposer Name", bold: true },
+        user.proposerName || "",
+        { text: "DOB of Proposer", bold: true },
+        user.language || "",
+      ],
+      [
+        { text: "Member Name", bold: true },
+        user.insuredName || "",
+        { text: "DOB of Member", bold: true },
+        openCase.clientDob || "",
+      ],
+      [
+        { text: "Relationship to Proposer", bold: true },
+        openCase.relationship || "",
+        { text: "Gender", bold: true },
+        openCase.gender || "",
+      ],
+      [
+        { text: "Mobile No", bold: true },
+        user.mobileNo || "",
+        { text: "Alternate No", bold: true },
+        user.alternateMobileNo || "",
+      ],
+      [
+        { text: "Height", bold: true },
+        openCase.height || "",
+        { text: "Weight", bold: true },
+        openCase.weight || "",
+      ],
 
-    [
-      { text: "BMI", bold: true },
-      openCase.bmi || "",
-      { text: "Location", bold: true },
-      openCase.address || "",
-    ],
-    [
-      { text: "Educational qualification", bold: true },
-      openCase.educationQualification || "",
-      { text: "Occupation Details", bold: true },
-      openCase.occupation || "",
-    ],
-  ];
+      [
+        { text: "BMI", bold: true },
+        openCase.bmi || "",
+        { text: "Location", bold: true },
+        openCase.address || "",
+      ],
+      [
+        { text: "Educational qualification", bold: true },
+        openCase.educationQualification || "",
+        { text: "Occupation Details", bold: true },
+        openCase.occupation || "",
+      ],
+    ];
 
-  // ✅ Prepare Table 2: From qcTeleMerData array
-  const table2Body: any[][] = [];
+    // ✅ Prepare Table 2: From qcTeleMerData array
+    const table2Body: any[][] = [];
 
-  function formatSubQuestions(subQuestions: any[] = []): any {
-    if (!Array.isArray(subQuestions) || subQuestions.length === 0) return "";
+    function formatSubQuestions(subQuestions: any[] = []): any {
+      if (!Array.isArray(subQuestions) || subQuestions.length === 0) return "";
 
-    return {
-      stack: subQuestions
-        .map((q, idx) => [
-          { text: `${idx + 1}. ${q.text}`, bold: true },
-          { text: `- ${q.answer}`, margin: [0, 0, 0, 5] },
-        ])
-        .flat(),
-      margin: [0, 2, 0, 2],
-    };
-  }
-
-  if (qcTeleMerArray.length > 0) {
-    const excludeKeys = ["_id", "isOnlyFemale", "agree", "subQuestions"];
-
-    // 1. Prepare headers once
-    const headers = Object.keys(qcTeleMerArray[0])
-      .filter((key) => !excludeKeys.includes(key))
-      .concat("subQuestions");
-    // 2. Push header row
-    console.log(":: headers.length >>", headers.length);
-    console.log(":: table2Body.length >>", table2Body.length);
-    if (!table2Body.length) {
-      table2Body.push(headers.map((key) => ({ text: key, bold: true })));
+      return {
+        stack: subQuestions
+          .map((q, idx) => [
+            { text: `${idx + 1}. ${q.text}`, bold: true },
+            { text: `- ${q.answer}`, margin: [0, 0, 0, 5] },
+          ])
+          .flat(),
+        margin: [0, 2, 0, 2],
+      };
     }
 
-    // 3. Push each data row
-    qcTeleMerArray.forEach((item: any) => {
-      const row = headers.map((key) => {
-        if (key === "subQuestions") {
-          return formatSubQuestions(item.subQuestions);
-        }
+    if (qcTeleMerArray.length > 0) {
+      const excludeKeys = ["_id", "isOnlyFemale", "agree", "subQuestions"];
 
-        const value = item[key];
-        return typeof value === "object" ? JSON.stringify(value) : value;
+      // 1. Prepare headers once
+      const headers = Object.keys(qcTeleMerArray[0])
+        .filter((key) => !excludeKeys.includes(key))
+        .concat("subQuestions");
+      // 2. Push header row
+      console.log(":: headers.length >>", headers.length);
+      console.log(":: table2Body.length >>", table2Body.length);
+      if (!table2Body.length) {
+        table2Body.push(headers.map((key) => ({ text: key, bold: true })));
+      }
+
+      // 3. Push each data row
+      qcTeleMerArray.forEach((item: any) => {
+        const row = headers.map((key) => {
+          if (key === "subQuestions") {
+            return formatSubQuestions(item.subQuestions);
+          }
+
+          const value = item[key];
+          return typeof value === "object" ? JSON.stringify(value) : value;
+        });
+
+        table2Body.push(row);
       });
+    }
 
-      table2Body.push(row);
+    const colCount = table2Body[0]?.length || 1;
+    const widths = Array(colCount).fill("auto");
+    if (colCount > 1) widths[colCount - 1] = "*";
+
+    const docDefinition: TDocumentDefinitions = {
+      content: [
+        {
+          columns: [
+            {
+              image: leftLogoDataUrl, // Left logo
+              width: 100,
+              alignment: "left",
+            },
+            {
+              text: "", // this is an invisible spacer
+              width: "*",
+            },
+            {
+              image: rightLogoDataUrl, // Right logo
+              width: 100,
+              margin: [0, 30, 0, 0],
+              alignment: "right",
+            },
+          ],
+          margin: [0, 0, 0, 20], // Add spacing below the logos
+        },
+        {
+          text: paragraphHeader,
+          style: "header",
+          alignment: "center",
+        } as Content,
+        { text: paragraphText, margin: [0, 0, 0, 20] } as Content,
+        { text: "User Details Table", style: "header" } as Content,
+        {
+          table: {
+            headerRows: 0,
+            widths: ["20%", "30%", "20%", "30%"], // adjust as needed
+            body: table1Body,
+          },
+          // layout: "lightHorizontalLines", // this adds proper borders
+          margin: [0, 0, 0, 20],
+          style: "tableCell",
+        } as Content,
+
+        {
+          text: "TeleMer Data Table",
+          style: "header",
+          margin: [0, 10, 0, 5],
+        } as Content,
+
+        {
+          table: {
+            headerRows: 0,
+            widths: ["7%", "20%", "20%", "*"],
+            body: table2Body.length ? table2Body : [["No data available"]],
+          },
+          // layout: "lightHorizontalLines",
+          // pageBreak: "before",
+          margin: [0, 5, 0, 20],
+          style: "tableCell",
+        } as Content,
+      ],
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 10],
+        },
+        tableCell: {
+          fontSize: 10,
+          margin: [2, 2, 2, 2],
+        },
+      },
+    };
+
+    const fonts = {
+      Roboto: {
+        normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
+        bold: path.resolve(__dirname, "../fonts/Roboto-Bold.ttf"),
+        italics: path.resolve(__dirname, "../fonts/Roboto-Italic.ttf"),
+        bolditalics: path.resolve(__dirname, "../fonts/Roboto-BoldItalic.ttf"),
+      },
+    };
+    const printer = new PdfPrinter(fonts);
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+
+    const passThrough = new PassThrough();
+    pdfDoc.pipe(passThrough);
+    pdfDoc.end();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=report.pdf");
+    passThrough.pipe(res);
+
+    const buffer = await getStream.buffer(passThrough);
+
+    const responseUrl = await internalUploadToS3({
+      fileBuffer: buffer,
+      fileName: `report-${Date.now()}.pdf`,
+      mimeType: "application/pdf",
+      requestId: user?.requestId,
+      destinationUrl: "hdfc",
     });
+
+    console.log({ responseUrl });
+
+    // await AssignMaster.findOneAndUpdate(
+    //   { _id: user._id },
+    //   {
+    //     $set: {
+    //       tranScriptUrl: responseUrl,
+    //       updatedAt: new Date(),
+    //     },
+    //   }
+    // );
+
+    return responseUrl;
+  } catch (error: any) {
+    throw new Error(`PDF generation failed: ${error.message}`);
   }
-
-  const colCount = table2Body[0]?.length || 1;
-  const widths = Array(colCount).fill("auto");
-  if (colCount > 1) widths[colCount - 1] = "*";
-
-  const docDefinition: TDocumentDefinitions = {
-    content: [
-      {
-        columns: [
-          {
-            image: leftLogoDataUrl, // Left logo
-            width: 100,
-            alignment: "left",
-          },
-          {
-            text: "", // this is an invisible spacer
-            width: "*",
-          },
-          {
-            image: rightLogoDataUrl, // Right logo
-            width: 100,
-            margin: [0, 30, 0, 0],
-            alignment: "right",
-          },
-        ],
-        margin: [0, 0, 0, 20], // Add spacing below the logos
-      },
-      {
-        text: paragraphHeader,
-        style: "header",
-        alignment: "center",
-      } as Content,
-      { text: paragraphText, margin: [0, 0, 0, 20] } as Content,
-      { text: "User Details Table", style: "header" } as Content,
-      {
-        table: {
-          headerRows: 0,
-          widths: ["20%", "30%", "20%", "30%"], // adjust as needed
-          body: table1Body,
-        },
-        // layout: "lightHorizontalLines", // this adds proper borders
-        margin: [0, 0, 0, 20],
-        style: "tableCell",
-      } as Content,
-
-      {
-        text: "TeleMer Data Table",
-        style: "header",
-        margin: [0, 10, 0, 5],
-      } as Content,
-
-      {
-        table: {
-          headerRows: 0,
-          widths: ["7%", "20%", "20%", "*"],
-          body: table2Body.length ? table2Body : [["No data available"]],
-        },
-        // layout: "lightHorizontalLines",
-        // pageBreak: "before",
-        margin: [0, 5, 0, 20],
-        style: "tableCell",
-      } as Content,
-    ],
-    styles: {
-      header: {
-        fontSize: 14,
-        bold: true,
-        margin: [0, 10, 0, 10],
-      },
-      tableCell: {
-        fontSize: 10,
-        margin: [2, 2, 2, 2],
-      },
-    },
-  };
-
-  const fonts = {
-    Roboto: {
-      normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
-      bold: path.resolve(__dirname, "../fonts/Roboto-Bold.ttf"),
-      italics: path.resolve(__dirname, "../fonts/Roboto-Italic.ttf"),
-      bolditalics: path.resolve(__dirname, "../fonts/Roboto-BoldItalic.ttf"),
-    },
-  };
-  const printer = new PdfPrinter(fonts);
-  const pdfDoc = printer.createPdfKitDocument(docDefinition);
-
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", "attachment; filename=report.pdf");
-  pdfDoc.pipe(res);
-  pdfDoc.end();
 }
