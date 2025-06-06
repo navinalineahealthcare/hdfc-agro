@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import { deviceType, devicesEnum, statusEnum } from "../types/auth.type";
+import { deviceType } from "../types/auth.type";
 import { env } from "../../../../env";
+import { devicesEnum } from "../../../common/enums";
 
 const deviceSchema = new mongoose.Schema(
   {

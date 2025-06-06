@@ -1,30 +1,17 @@
 import { Request, Response } from "express";
 import { AssignMaster } from "../../../admin/doctor/models/assignMaster.model";
-import { pagination } from "../../../../utils/utils";
-import { salesCaseListResponse } from "../responses/dashboard.response";
-
-class salescasesController {
-  public static async salescasesList(req: Request, res: Response) {
+import ExcelJS from "exceljs";
+import _ from "lodash";
+class misCasesController {
+  public static async misCasesExport(req: Request, res: Response) {
     try {
-      const AssignCaseId = req.body.auth.device.userId;
+      const {
+        search = "",
+        fromDate,
+        toDate,
+      } = req.body.validatedQueryData || {};
 
-      const { page = 1, perPage = 10 } = req.body.pagination || {};
-      const { search = "" } = req.body.validatedQueryData || {};
-
-      const assignCase = await AssignMaster.findById(AssignCaseId).lean();
-
-      if (!assignCase) {
-        res.status(404).json({
-          status: false,
-          message: "Assigned case not found.",
-        });
-        return;
-      }
-
-      const filter: any = {
-        proposalNo: assignCase.proposalNo,
-        deletedAt: null,
-      };
+      const filter: any = { deletedAt: null };
 
       if (search && typeof search === "string" && search.trim() !== "") {
         filter.$or = [
@@ -34,61 +21,137 @@ class salescasesController {
         ];
       }
 
-      const total = await AssignMaster.countDocuments(filter);
+      if (fromDate && toDate) {
+        filter.createdAt = {
+          $gte: new Date(fromDate),
+          $lte: new Date(toDate),
+        };
+      }
 
       const assignCases = await AssignMaster.find(filter)
         .populate("openCaseId")
+        .populate("dispositionId") // Ensure this is in your schema as a ref
         .sort({ createdAt: -1 })
-        .skip(perPage * (page - 1))
-        .limit(perPage)
         .lean();
 
-      res.status(200).json({
-        status: true,
-        data: salesCaseListResponse(assignCases),
-        pagination: pagination(total, perPage, page),
-        message: req.t("salescases.list"),
+      // Create workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Assign Cases");
+
+      // Dynamically build columns from keys
+      const sample = assignCases[0] || {};
+      worksheet.columns = Object.keys(sample).map((key) => ({
+        header: _.startCase(key), // Makes headers readable
+        key,
+        width: 25,
+      }));
+
+      // Add all rows
+      assignCases.forEach((row) => {
+        worksheet.addRow(row);
       });
+
+      // Set headers for download
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=assign_cases.xlsx"
+      );
+
+      await workbook.xlsx.write(res);
+      res.status(200).end();
     } catch (error: any) {
-      console.error("Error in salescasesList:", error);
+      console.error("Error in misCasesExport:", error);
       res.status(500).json({
         status: false,
-        message: "Failed to fetch sales cases. Please try again.",
+        message: "Failed to export assign cases. Please try again.",
       });
     }
   }
 
-  public static async salescasesdetails(req: Request, res: Response) {
-    try {
-      const { userId } = req.body.auth.device;
-      const { id: assignedToId } = req.body.validatedParamsData;
+  // public static async misCasesExport(req: Request, res: Response) {
+  //   try {
+  //     const {
+  //       search = "",
+  //       fromDate,
+  //       toDate,
+  //     } = req.body.validatedQueryData || {};
 
-      const assignCase = await AssignMaster.findById(assignedToId)
-        .populate("openCaseId")
-        .lean();
+  //     const filter: any = { deletedAt: null };
 
-      if (!assignCase) {
-        res.status(404).json({
-          status: false,
-          message: "Sales case details not found.",
-        });
-        return;
-      }
+  //     if (search && typeof search === "string" && search.trim() !== "") {
+  //       filter.$or = [
+  //         { proposerName: { $regex: new RegExp(search, "i") } },
+  //         { insuredName: { $regex: new RegExp(search, "i") } },
+  //         { proposalNo: { $regex: new RegExp(search, "i") } },
+  //       ];
+  //     }
 
-      res.status(200).json({
-        status: true,
-        data: assignCase,
-        message: req.t("crud.details", { model: "Sales Case" }),
-      });
-    } catch (error: any) {
-      console.error("Error in salescasesdetails:", error);
-      res.status(500).json({
-        status: false,
-        message: "Failed to fetch case details. Please try again later.",
-      });
-      return;
-    }
-  }
+  //     if (fromDate && toDate) {
+  //       filter.createdAt = {
+  //         $gte: new Date(fromDate),
+  //         $lte: new Date(toDate),
+  //       };
+  //     }
+
+  //     const assignCases = await AssignMaster.find(filter)
+  //       .populate("openCaseId")
+  //       .sort({ createdAt: -1 })
+  //       .lean();
+
+  //     return res.status(200).json({
+  //       status: true,
+  //       data: assignCases,
+  //       message: req.t("assigncases.export"),
+  //     });
+
+  //     // Initialize workbook and worksheet
+  //     const workbook = new ExcelJS.Workbook();
+  //     const worksheet = workbook.addWorksheet("Assign Cases");
+
+  //     // Add headers
+  //     worksheet.columns = [
+  //       { header: "Proposal No", key: "proposalNo", width: 20 },
+  //       { header: "Proposer Name", key: "proposerName", width: 30 },
+  //       { header: "Insured Name", key: "insuredName", width: 30 },
+  //       { header: "Assigned At", key: "createdAt", width: 25 },
+  //     ];
+
+  //     // Add data rows
+  //     assignCases.forEach((item) => {
+  //       worksheet.addRow({
+  //         proposalNo: item.proposalNo || "",
+  //         proposerName: item.proposerName || "",
+  //         insuredName: item.insuredName || "",
+  //         createdAt: item.createdAt
+  //           ? new Date(item.createdAt).toLocaleString()
+  //           : "",
+  //       });
+  //     });
+
+  //     // Set response headers for Excel download
+  //     res.setHeader(
+  //       "Content-Type",
+  //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  //     );
+  //     res.setHeader(
+  //       "Content-Disposition",
+  //       `attachment; filename=$MISDetails${new Date()}.xlsx`
+  //     );
+
+  //     await workbook.xlsx.write(res);
+  //     res.status(200).end();
+  //   } catch (error: any) {
+  //     console.error("Error in misCasesExport:", error);
+  //     res.status(500).json({
+  //       status: false,
+  //       message: "Failed to export assign cases. Please try again.",
+  //     });
+  //   }
+  // }
 }
 
-export default salescasesController;
+export default misCasesController;
